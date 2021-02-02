@@ -131,7 +131,9 @@ So you have an Application which counts visit, but also allows you to have comme
 you have multiple ways to handle multiple states in cabinets.
 
 **1-.** Having independent Store, so you will handle how and when to use it.
+
 **2-**  Creating one single Store with an Object that will be the root for all your substores.
+
 **3.-** Combined different Stores. Good solution if you want to keep the code cleaner.
 you can combine different stores from different  files.
 
