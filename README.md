@@ -200,6 +200,7 @@ function myAnotherFunction(){
   console.log("Comments:" +  commentsStore.getState());
   const lastComment = commentsStore.getState().slice(-1)[0]; 
   console.log(`Removing last comment ${lastComment.comment} with id: {lastComment.id}` );
+  commentsStore.fire(commentsStore.actions.removeComment(lastComment.id) );
   console.log("Comments:" +  commentsStore.getState());
 }
 
@@ -208,13 +209,199 @@ myAnotherFunction();
 
 ```
 
-The first approach it is recomended if you are sure those Stores do have nothing to do with each other and
-you need to be notified indepedently(Although **subscribe** function support props level subscription).
+The first approach it's recomended if you are sure those Stores do have nothing to do with each other and
+you need to be notified indepedently(Although **subscribe** function support props level subscription). Also
+you can have those stores in multiple files.
 
-But you already noticed, when multiple stores is used we cannot use spreading which is a cool js feature,
-so to interact with which store we need very long commands.
+But you already noticed, when multiple stores are used in same scope we cannot use spreading which is a cool js feature,
+so to interact with which store we need very long sentences.
 
-Let's implement second approach
+Let's implement second approach, so **AppStores.js** file :
 
+
+```javascript
+import { setupStore } from "cabinets";
+
+const stringId = (str) => [...str].map(c => c.charCodeAt(0) )
+                          .join("") + "_" + new Date().getTime();
+                          
+const appStore = setupStore({
+    name: "appStore",
+    initState: {counter:0, comments:[]},
+    operations: {
+        increment: (state, payload) => state.counter + payload,
+        decrement: (state, payload) => state.counter - payload,
+        comment: (state, payload) => {
+          const newComment = {comment:payload,id:stringId(payload)}
+          return [...state.comments, newComment];
+        },
+        removeComent: (state, payload) => {
+          const comments = state.comments.filter(comment => comment.id != payload)
+          state.comments = comments;
+          return state;
+        }
+        
+     }
+}
+
+export appStore;
+
+```
+
+
+To use it, you only need to import them
+
+```javascript
+import { useStore } from "cabinets";
+import {appStore} from "./AppStores.js";
+
+
+const { actions, fire, getState, subscribe } = useStore("appStore");
+
+
+subscribe((state)=> console.log("Counter State has chaged: " + state.counter), ["counter"] );
+subscribe((state)=> console.log("Hey you have new anonymous comment: " + state.comments), ["comments] );
+
+
+function myFunction(){
+  console.log(getState().counter);
+  fire(actions.increment(10) );
+  fire(actions.decrement(2) );
+  console.log(getState().counter);
+}
+
+function myAnotherFunction(){
+  console.log("Comments:" +  getState().comments);
+  fire(actions.comment("Hello, an comment from Amasoft DR, keep going.") );
+  console.log("Comments:" +  getState().comments);
+  const lastComment = getState().comments.slice(-1)[0]; 
+  console.log(`Removing last comment ${lastComment.comment} with id: {lastComment.id}` );
+  fire(actions.removeComment(lastComment.id) );
+  console.log("Comments:" +  getState().comments);
+}
+
+myFunction();
+myAnotherFunction();
+
+```
+You can see, now the code it's cleaner and we also have fined-grained notification based on prop change. 
+This approach is good for small apps and/or single developer dedicated only with State development.
+This approach could result difficult to follow if you have too many operations, subs-stores, and 
+different people writing your application code. It requires same file, same store to be edited, an probably 
+differnt devs can write their own substore and become
+a nigthmare, imagine the frustration while merging.
+
+This lead us to the 3rd approach, **Combining Store** 
+
+When writing independent Stores that are going to be combined you need
+to set-up you mind and know that they can be combined and you need
+a way to access your specific state sub-store because the state
+that is passed to maps, interceptors and reducers will have 
+every sub-store attach to it, In a store that is going to be combined
+you alaways access your piece of store's state as state.yourStoreName.
+
+Also, if you know for sure or agree with other devs that your store
+will be combined with some other specific stores then you will have
+access to those stores data or even can trigger state updates for them.
+
+Let's see the code
+
+Code for **counterStore.js**
+```javascript
+
+import { setupStore } from "cabinets";
+
+const counterStore = setupStore({
+    name: "counter",
+    initState: 10,
+    operations: {
+        increment: (state, payload) => {
+          state.counter = state.counter + payload;
+          return state;
+        },
+        decrement: (state, payload) => {
+           state.counter = state.counter + payload;
+           return state;
+        }
+     }
+}
+
+```
+Code for **CommentsStore.js**
+```javascript
+import { setupStore } from "cabinets";
+
+const stringId = (str) => [...str].map(c => c.charCodeAt(0) )
+                          .join("") + "_" + new Date().getTime();
+                          
+const commentStore = setupStore({
+    name: "comments",
+    initState: [],
+    operations: {
+        comment: (state, payload) => {
+          const newComment = { comment:payload,id:stringId(payload) }
+          state.comments = [...state.comments, newComment];
+          return state;
+        },
+        removeComent: (state, payload) => {
+          state.comments = state.comments.filter(comment => comment.id != payload)
+          return state;
+        }
+     }
+}
+
+export commentStore;
+```
+Code for **MyAppStore.js**
+
+```javascript
+import { combinedStores, useStore } from "cabinets";
+import {counterStore} from "./CounterStore.js";
+import {commentsStore} from "./CommentsStroe.js";
+
+const myAppStore = combinedStores("myAppStore", counterStore, commentsStore);
+
+export default function myAppStore(){
+    return useStore("myAppStore");
+ }
+
+```
+
+Now you can use import **MyAppStore.js** file
+
+
+
+```javascript
+import { useStore } from "cabinets";
+import myAppStore from "./MyAppStore.js";
+
+const { actions, fire, getState, subscribe } = myAppStore("appStore");
+
+
+subscribe((state)=> console.log("Counter State has chaged: " + state.counter), ["counter"] );
+subscribe((state)=> console.log("Hey you have new anonymous comment: " + state.comments), ["comments] );
+
+
+function myFunction(){
+  console.log(getState().counter);
+  fire(actions.increment(10) );
+  fire(actions.decrement(2) );
+  console.log(getState().counter);
+}
+
+function myAnotherFunction(){
+  console.log("Comments:" +  getState().comments);
+  fire(actions.comment("Hello, an comment from Amasoft DR, keep going.") );
+  console.log("Comments:" +  getState().comments);
+  const lastComment = getState().comments.slice(-1)[0]; 
+  console.log(`Removing last comment ${lastComment.comment} with id: {lastComment.id}` );
+  fire(actions.removeComment(lastComment.id) );
+  console.log("Comments:" +  getState().comments);
+}
+
+myFunction();
+myAnotherFunction();
+
+```
 
 
