@@ -61,7 +61,7 @@ myFunction();
 
 ```
 Please note when you call **useStore** function it will return
-multiple important items
+multiple important items:
 
 -**actions:** Is an array of all actions functions that will trigger the invocation of a reducer, one of this action must be passed to fire
 function. An action function can take a payload argument with will
@@ -73,12 +73,12 @@ and interceptors those functions will be called first,then the
 reducer.
 
 
--**subscribe**: Is a function that will register a callback  so
-  **cabinets.js** could notify when the state has changed, it takes
-   another argument, an array of dependencies, very useful when 
-   partial object state change subscription is required. e.g if you have
-   an state called app and **app** has a property called **userInfo**, 
+-**subscribe**: It's a function that will register a callback  so
+  **cabinets.js** could notify when the state has changed, passing
+   the current state to the callback it takes another argument, an 
+   array of dependencies, very useful when  partial object state change subscription 
+   is required. e.g if you have an state called app and **app** has a property called **userInfo**, 
    so you can subscribe your callback to execute it only if **userInfo** has
    changed, so you could update your NavBar info only if this prop changed.
 
--**getState:** Gives you the current state for the store specified in the **useStore** function.
+-**getState:** It's a function that gives you the current state for the store specified in the **useStore** function.
