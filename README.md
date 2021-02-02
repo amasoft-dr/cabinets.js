@@ -55,13 +55,13 @@ why things went wrong.
 > To Record all events/interactions with your stores. So you could debug easily, even
 do time travel debugging.
 
-##Let's Code
+## Let's Code
 
 Cabinets.js is based on the idea that in your application you can have multiple store containers
 so you could decide if you are going to use them independently from each other or even you can combine them 
 and use it a one single big store.
 
-An exmple of how to setup and export a simple store in **AppStores.js**;
+An exmple of how to setup and export a simple store in **AppStores.js** file
 
 ```javascript
 import { setupStore } from "cabinets";
@@ -90,11 +90,10 @@ const { actions, fire, getState, subscribe } = useStore("counter");
 subscribe((state)=> console.log("State has chaged") );
 
 function myFunction(){
-  const state = getState();
-  console.log(state);
-  fire(actions.increment(10);
-  fire(actions.decrement(2);
-  console.log(state);
+  console.log(getState());
+  fire(actions.increment(10) );
+  fire(actions.decrement(2) );
+  console.log(getState());
 }
 
 myFunction();
@@ -124,3 +123,86 @@ reducer.
    changed, so you could update your NavBar info only if this prop changed.
 
 -**getState:** It's a function that gives you the current state for the store specified in the **useStore** function.
+
+
+### Using multiple Stores 
+
+So you have an Application which counts visit, but also allows you to have comments,
+you have multiple ways to handle multiple states in cabinets.
+
+**1-.** Having independent Store, so you will handle how and when to use it.
+**2-**  Creating one single Store with an Object that will be the root for all your substores.
+**3.-** Combined different Stores. Good solution if you want to keep the code cleaner.
+you can combine different stores from different  files.
+
+Let's see first Using multiple independent Stores in  **AppStores.js** file
+```javascript
+import { setupStore } from "cabinets";
+
+
+
+const counterStore = setupStore({
+    name: "counter",
+    initState: 10,
+    operations: {
+        increment: (state, payload) => state + payload,
+        decrement: (state, payload) => state - payload
+     }
+}
+
+const stringId = (str) => [...str].map(c => c.charCodeAt(0) )
+                          .join("") + "_" + new Date().getTime();
+                          
+const commentStore = setupStore({
+    name: "comments",
+    initState: [],
+    operations: {
+        comment: (state, payload) => {
+          const newComment = {comment:payload,id:stringId(payload)}
+          return [...state, newComment];
+        },
+        removeComent: (state, payload) => state.filter(comment => comment.id != payload)
+     }
+}
+
+
+
+export counterStore;
+export commentStore;
+
+```
+
+To use it, you only need to import them
+
+```javascript
+import { useStore } from "cabinets";
+import {counterStore, commentStore} from "./AppStores.js";
+
+const counterStore = useStore("counter");
+const commentsStore = useStore("commentsStore");
+
+counterStore.subscribe((state)=> console.log("Counter State has chaged: " + state) );
+commentsStore.subscribe((state)=> console.log("Hey you have new anonymous comment: " + state) );
+
+
+function myFunction(){
+  console.log(counterStore.state);
+  fire(counterStore.actions.increment(10) );
+  fire(counterStore.actions.decrement(2) );
+  console.log(counterStore.state);
+}
+
+function myAnotherFunction(){
+  console.log("Comments:" +  commentsStore.getState());
+  commentsStore.fire(commentsStore.actions.comment("Hello, an comment from Amasoft DR, keep going.") );
+  console.log("Comments:" +  commentsStore.getState());
+  const lastComment = commentsStore.getState().slice(-1)[0]; 
+  console.log(`Removing last comment ${lastComment.comment} with id: lastComment.id` );
+  console.log("Comments:" +  commentsStore.getState());
+}
+
+myFunction();
+myAnotherFunction();
+
+```
+
