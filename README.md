@@ -13,6 +13,17 @@ It is not tied to any UI library like React or Vue, you can use it with plain-ol
 However we have a Cabinets-react.js which makes simple the integration with React.js. Please click **here** to check
 this project.
 
+##It does not have dependencies
+Hence **cabinets.js** is very simple it does not use any dependencies. We plan to stick to this principle.
+It is a very small size library, so could be attractive to your project if you want to have
+low resources size.
+
+## It is intended for small-medium size application
+Cabinets main purpose is to be used where it really needs: small-medium size applications
+we are not competing with others well-stablished, well stables Global State Containers,
+so, but there is no any technical restriction, you can use it but probably you end up
+needing some more feautrues that are not present in cabinets.
+
 
 
 ## Features
