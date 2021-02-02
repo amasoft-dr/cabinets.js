@@ -57,6 +57,8 @@ function myFunction(){
   console.log(state);
 }
 
+myFunction();
+
 ```
 Please note when you call **useStore** function it will return
 multiple important items
@@ -78,3 +80,5 @@ reducer.
    an state called app and **app** has a property called **userInfo**, 
    so you can subscribe your callback to execute it only if **userInfo** has
    changed, so you could update your NavBar info only if this prop changed.
+
+-**getState:** Gives you the current state for the store specified in the **useStore** function.
