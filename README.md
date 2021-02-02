@@ -28,6 +28,27 @@ needing some more feautrues that are not present in cabinets.
 
 ## Features
 
+-Uniderictional State management. Data Flows in one predicatble way only.
+-No configuration is required, use it as it is.
+-Easy API
+-Can have multiple Stores
+-Can use multiple Stores independlty or can use them combined them.
+-Supports Mappings to transform the payload before reducer is reached.
+-Supports Interceptors which allow to do extra things and even modify both
+State and Payload.
+-Support Lazy Actions to modify the state in a async way.
+-Rich set of custom Cabinets Exceptions(Error) so you could always know
+why things went wrong.
+
+
+## Not yet implemented, but working on that
+
+-Cabinets Flight Recorder:
+> To Record all events/interactions with your stores. So you could debug easily, even
+do time travel debugging.
+
+##Let's Code
+
 Cabinets.js is based on the idea that in your application you can have multiple store containers
 so you could decide if you are going to use them independently from each other or even you can combine them 
 and use it a one single big store.
