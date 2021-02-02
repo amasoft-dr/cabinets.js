@@ -199,7 +199,7 @@ function myAnotherFunction(){
   commentsStore.fire(commentsStore.actions.comment("Hello, an comment from Amasoft DR, keep going.") );
   console.log("Comments:" +  commentsStore.getState());
   const lastComment = commentsStore.getState().slice(-1)[0]; 
-  console.log(`Removing last comment ${lastComment.comment} with id: lastComment.id` );
+  console.log(`Removing last comment ${lastComment.comment} with id: {lastComment.id}` );
   console.log("Comments:" +  commentsStore.getState());
 }
 
@@ -207,4 +207,14 @@ myFunction();
 myAnotherFunction();
 
 ```
+
+The first approach it is recomended if you are sure those Stores do have nothing to do with each other and
+you need to be notified indepedently(Although **subscribe** function support props level subscription).
+
+But you already noticed, when multiple stores is used we cannot use spreading which is a cool js feature,
+so to interact with which store we need very long commands.
+
+Let's implement second approach
+
+
 
