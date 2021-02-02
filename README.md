@@ -7,7 +7,7 @@ Cabinets is global state management library, it is not tied to any library or fr
 In contrast with others state management libraries, it is desgined to be simple to use, it is intuitive, you don't even need
 to read the whole documentation to get your app up and running with Cabinets.js
 
-##It is not tied to any UI library
+## It is not tied to any UI library
 
 It is not tied to any UI library like React or Vue, you can use it with plain-old-vanilla Javascript and will work.
 However we have a Cabinets-react.js which makes simple the integration with React.js. Please click **here** to check
@@ -15,7 +15,7 @@ this project.
 
 
 
-# Features
+## Features
 
 Cabinets.js is based on the idea that in your application you can have multiple store containers
 so you could decide if you are going to use them independently from each other or even you can combine them 
