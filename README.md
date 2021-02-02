@@ -15,7 +15,7 @@ this project.
 
 
 
-## Features
+# Features
 
 Cabinets.js is based on the idea that in your application you can have multiple store containers
 so you could decide if you are going to use them independently from each other or even you can combine them 
@@ -61,17 +61,17 @@ function myFunction(){
 Please note when you call **useStore** function it will return
 multiple important items
 
--actions: Is an array of all actions functions that will trigger the invocation of a reducer, one of this action must be passed to fire
+-**actions:** Is an array of all actions functions that will trigger the invocation of a reducer, one of this action must be passed to fire
 function. An action function can take a payload argument with will
 be passed to the mapper, interceptor and finally to the reducer.
 
--fire: Is a function that will take an action and 
+-**fire**: Is a function that will take an action and 
 and will invoke a reducer, if the reducer has associated mappings
 and interceptors those functions will be called first,then the
 reducer.
 
 
--subscribe: Is a function that will register a callback  so
+-**subscribe**: Is a function that will register a callback  so
   **cabinets.js** could notify when the state has changed, it takes
    another argument, an array of dependencies, very useful when 
    partial object state change subscription is required. e.g if you have
