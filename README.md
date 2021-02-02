@@ -85,10 +85,12 @@ reducer.
 
 
 -**subscribe**: It's a function that will register a callback  so
-  **cabinets.js** could notify when the state has changed, passing
-   the current state to the callback it takes another argument, an 
-   array of dependencies, very useful when  partial object state change subscription 
-   is required. e.g if you have an state called app and **app** has a property called **userInfo**, 
+  **cabinets.js** could notify when the state has changed, cabinetss.js will
+   pass the current state to the callback.(It is very convinience to use subscribe
+   function with for example rect *useState => setState* so, when state change component
+   will re-render. This technique is use in cabinets-react.js). Subscribe takes another argument;
+   an array of dependencies, very useful when  partial object state change subscription 
+   is required. e.g if you have a state called app and **app** has a property called **userInfo**, 
    so you can subscribe your callback to execute it only if **userInfo** has
    changed, so you could update your NavBar info only if this prop changed.
 
