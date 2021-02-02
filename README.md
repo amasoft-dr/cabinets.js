@@ -54,7 +54,7 @@ To use it, you only need to import it
 
 ```javascript
 import { useStore } from "cabinets";
-import counterStore from "./AppStores.js";
+import {counterStore} from "./AppStores.js";
 
 const { actions, fire, getState, subscribe } = useStore("counter");
 
