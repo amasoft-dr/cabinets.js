@@ -230,7 +230,7 @@ const appStore = setupStore({
           return [...state.comments, newComment];
         },
         removeComent: (state, payload) => {
-          const comments = state.comments.filter(comment => comment.id != payload)
+          const comments = state.comments.filter(comment => comment.id !== payload)
           state.comments = comments;
           return state;
         }
@@ -341,7 +341,7 @@ const commentStore = setupStore({
           return state;
         },
         removeComent: (state, payload) => {
-          state.comments = state.comments.filter(comment => comment.id != payload)
+          state.comments = state.comments.filter(comment => comment.id !== payload)
           return state;
         }
      }
