@@ -207,8 +207,6 @@ The first approach it's recommended if you are sure those Stores do have nothing
 you need to be notified independently(Although **subscribe** function support props level subscription). Also
 you can have those stores in multiple files.
 
-## Combining Stores
-
 But you already noticed, when multiple stores are used in the same scope we cannot use spreading which is a cool js feature,
 so to interact with which store we need very long sentences.
 
@@ -286,18 +284,20 @@ This approach could result difficult to follow if you have too many operations, 
 different devs can write their own substore and become
 a nightmare, imagine the frustration while merging.
 
+
 This leads us to the 3rd approach, **Combining Store** 
 
-When writing independent Stores that are going to be combined you need
-to set-up, your mind and know that they can be combined and you need
-a way to access your specific state sub-store because the state
-that is passed to maps, interceptors and reducers will have 
-every sub-store attach to it, In a store that is going to be combined
-you always access your piece of store's state as state.yourStoreName.
+## Combining Stores
 
-Also, if you know for sure or agree with other devs that your store
-will be combined with some other specific stores then you will have
-access to those stores data or even can trigger state updates for them.
+When writing independent Stores that are going to be combined you need
+to set-up, your mind and know that they are going to be attached as a sub-store 
+on the root newly combined Store and you need a way to access your 
+specific state sub-store because the state that is passed to maps, 
+interceptors and reducers will have  every sub-store attach to it, 
+so you can have access to all substores that are combined too,
+but remember you always access your piece of store's state as 
+state.yourStoreName.
+
 
 Let's see the code
 
