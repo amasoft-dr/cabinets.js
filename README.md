@@ -1,26 +1,26 @@
-# Cabinets.js A Simple State Management Libary
+## Cabinets.js A Simple State Management Libary
 Cabinets is global state management library, it is not tied to any library or framework. It is simple to use but yet powerful.
 
-## To do List in Vanilla JS
+### To do List in Vanilla JS
 To do...
 
-## It is designed to be simple
+### It is designed to be simple
 
 In contrast with others state management libraries, it is desgined to be simple to use, it is intuitive, you don't even need
 to read the whole documentation to get your app up and running with Cabinets.js
 
-## It is not tied to any UI library
+### It is not tied to any UI library
 
 It is not tied to any UI library like React or Vue, you can use it with plain-old-vanilla Javascript, and will work.
 However, we have a Cabinets-react.js which makes simple the integration with React.js. Please click **here** to check
 this project.
 
-## It does not have dependencies
+### It does not have dependencies
 Hence **cabinets.js** is very simple it does not use any dependencies. We plan to stick to this principle.
 It is a very small size library, so could be attractive to your project if you want to have
 low resources size.
 
-## It is intended for small-medium size application
+### It is intended for small-medium size application
 Cabinets main purpose is to be used where it really needs: small-medium size applications
 we are not competing with other well-established, well stables Global State Containers,
 so, but there is no technical restriction, you can use it but probably you end up
@@ -28,7 +28,7 @@ needing some more features that are not present in cabinets.
 
 
 
-## Features
+### Features
 
 -Unidirectional State management. Data Flows in one predictable way only.
 
@@ -51,13 +51,13 @@ State and Payload.
 why things went wrong.
 
 
-## Not yet implemented but working on that
+### Not yet implemented but working on that
 
 -Cabinets Flight Recorder:
 > To Record all events/interactions with your stores. So you could debug easily, even
 do time travel debugging.
 
-## Let's Code
+### Let's Code
 
 Cabinets.js is based on the idea that in your application you can have multiple stores containers
 so you could decide if you are going to use them independently from each other or even you can combine them 
@@ -287,7 +287,7 @@ a nightmare, imagine the frustration while merging.
 
 This leads us to the 3rd approach, **Combining Store** 
 
-## Combining Stores
+### Combining Stores
 
 When writing independent Stores that are going to be combined you need
 to set-up, your mind and know that they are going to be attached as a sub-store 
@@ -406,7 +406,7 @@ However, the 2nd one implementation it's better because it is more maintainable 
 team works, and probably it is more readable because you can have multiple small stores
 then combine them instead of having a very big fat Store.
 
-## Maps: Changing payload prior to execute reducers
+### Maps: Changing payload prior to execute reducers
 todo...
 
 
@@ -416,6 +416,6 @@ Todo...
 
 
 
-## Lazy Actions: Modifying your store in an async away
+### Lazy Actions: Modifying your store in an async away
 Todo...
 
