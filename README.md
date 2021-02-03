@@ -75,7 +75,7 @@ const counterStore = setupStore({
         increment: (state, payload) => state + payload,
         decrement: (state, payload) => state - payload
      }
-}
+});
 
 export counterStore;
 
@@ -147,7 +147,7 @@ const counterStore = setupStore({
         increment: (state, payload) => state + payload,
         decrement: (state, payload) => state - payload
      }
-}
+});
 
 const stringId = (str) => [...str].map(c => c.charCodeAt(0) )
                           .join("") + "_" + new Date().getTime();
@@ -162,7 +162,7 @@ const commentStore = setupStore({
         },
         removeComent: (state, payload) => state.filter(comment => comment.id != payload)
      }
-}
+});
 
 export {counterStore, commentStore};
 
@@ -236,7 +236,7 @@ const appStore = setupStore({
         }
         
      }
-}
+});
 
 export appStore;
 
@@ -317,7 +317,7 @@ const counterStore = setupStore({
            return state;
         }
      }
-}
+});
 
 export counterStore;
 
@@ -343,7 +343,7 @@ const commentStore = setupStore({
           return state;
         }
      }
-}
+});
 
 export commentStore;
 ```
