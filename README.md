@@ -207,6 +207,8 @@ The first approach it's recommended if you are sure those Stores do have nothing
 you need to be notified independently(Although **subscribe** function support props level subscription). Also
 you can have those stores in multiple files.
 
+## Combining Stores
+
 But you already noticed, when multiple stores are used in the same scope we cannot use spreading which is a cool js feature,
 so to interact with which store we need very long sentences.
 
