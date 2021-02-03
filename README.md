@@ -164,8 +164,7 @@ const commentStore = setupStore({
      }
 }
 
-export counterStore;
-export commentStore;
+export {counterStore, commentStore};
 
 ```
 
