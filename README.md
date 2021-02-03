@@ -160,7 +160,7 @@ const commentStore = setupStore({
           const newComment = {comment:payload,id:stringId(payload)}
           return [...state, newComment];
         },
-        removeComent: (state, payload) => state.filter(comment => comment.id != payload)
+        removeComent: (state, payload) => state.filter(comment => comment.id !== payload)
      }
 });
 
