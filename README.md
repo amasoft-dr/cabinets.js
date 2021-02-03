@@ -411,7 +411,7 @@ todo...
 
 
 
-## Interceptors: Executing code after mappings is done an prior reducer is called
+### Interceptors: Executing code after mappings is done an prior reducer is called
 Todo...
 
 
