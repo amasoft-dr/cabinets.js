@@ -12,7 +12,7 @@ to read the whole documentation to get your app up and running with Cabinets.js
 ### It is not tied to any UI library
 
 It is not tied to any UI library like React or Vue, you can use it with plain-old-vanilla Javascript, and will work.
-However, we have a Cabinets-react.js which makes simple the integration with React.js. Please click **here** to check
+However, we have a Cabinets-react.js which makes simple the integration with React.js. Please check **[Cabinets-reac.js](https://github.com/amasoft-dr/cabinets-react.js)** to check
 this project.
 
 ### It does not have dependencies
