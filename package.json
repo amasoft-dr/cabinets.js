@@ -1,0 +1,26 @@
+{
+  "name": "cabinets",
+  "version": "1.0.0",
+  "description": "A simple but powerful global state management library.",
+  "main": "module.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andreidim/cabinets.js.git"
+  },
+  "keywords": [
+    "state",
+    "state-management",
+    "global-state",
+    "store",
+    "global-store"
+  ],
+  "author": "amasoft <amasoft.dr@gmail.com> (https://github.com/amasoft-dr)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/andreidim/cabinets.js/issues"
+  },
+  "homepage": "https://github.com/andreidim/cabinets.js#readme"
+}
