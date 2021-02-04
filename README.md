@@ -254,7 +254,7 @@ const { actions, fire, getState, subscribe } = useStore("appStore");
 
 
 subscribe((state)=> console.log("Counter State has chaged: " + state.counter), ["counter"] );
-subscribe((state)=> console.log("Hey you have new anonymous comment: " + state.comments), ["comments] );
+subscribe((state)=> console.log("Hey you have new anonymous comment: " + state.comments), ["comments"] );
 
 
 function myFunction(){
@@ -377,7 +377,7 @@ const { actions, fire, getState, subscribe } = myAppStore("appStore");
 
 
 subscribe((state)=> console.log("Counter State has chaged: " + state.counter), ["counter"] );
-subscribe((state)=> console.log("Hey you have new anonymous comment: " + state.comments), ["comments] );
+subscribe((state)=> console.log("Hey you have new anonymous comment: " + state.comments), ["comments"] );
 
 
 function myFunction(){
