@@ -2,7 +2,7 @@
   "name": "cabinets",
   "version": "1.0.1",
   "description": "A simple but powerful global state management library.",
-  "main": "src/module.js",
+  "main": "lib/module.js",
   "scripts": {
     "test": "jest",
     "build": "webpack --mode production",
