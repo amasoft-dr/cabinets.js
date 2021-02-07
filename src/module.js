@@ -269,7 +269,6 @@ class Cabinets {
                 };
 
                 $this.mount(store);
-                console.log(store);
                 return limitedStore(store);
             }
             const combiner = (items) =>
