@@ -1,10 +1,12 @@
 {
   "name": "cabinets",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A simple but powerful global state management library.",
-  "main": "module.js",
+  "main": "src/module.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "build": "webpack --mode production",
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -22,5 +24,12 @@
   "bugs": {
     "url": "https://github.com/andreidim/cabinets.js/issues"
   },
-  "homepage": "https://github.com/andreidim/cabinets.js#readme"
+  "homepage": "https://github.com/andreidim/cabinets.js#readme",
+  "devDependencies": {
+    "@babel/core": "^7.12.13",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^8.2.2",
+    "webpack": "^5.21.2",
+    "webpack-cli": "^4.5.0"
+  }
 }
