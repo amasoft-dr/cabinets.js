@@ -35,7 +35,14 @@ class Cabinets {
                 else return "";
             }
         }
-       
+
+        class SetupStoreError extends CabinetsError {
+            constructor(message, stateInfo) {
+                super(message, stateInfo);
+                this.name = this.name + ".SetupStoreError";
+            }
+        }
+
         class ReducerError extends CabinetsError {
             constructor(message, stateInfo) {
                 super(message, stateInfo);
@@ -55,7 +62,6 @@ class Cabinets {
                 super(message, stateInfo);
                 this.name = this.name + ".MappingError";
             }
-
         }
         // eslint-disable-next-line
         class InterceptorError extends CabinetsError {
@@ -94,15 +100,15 @@ class Cabinets {
 
             //function initStore(){
             //}
-            async function lazyFire(action){
+            async function lazyFire(action) {
                 return dispatch(action, "lazyActions");
             }
 
-            function fire(action){
+            function fire(action) {
                 return dispatch(action);
             }
 
-            function dispatch(action,actionType="actions") {
+            function dispatch(action, actionType = "actions") {
                 let store;
                 try {
                     store = Object.values($this.getStores()).find(
@@ -114,7 +120,7 @@ class Cabinets {
                     //Todo: Error Handling
                     if (store) {
                         const reducerFn = store.reducer[action.type];
-                        const ctx = {reducer:store.reducer, fire: store.fire, actions:store.actions};
+                        const ctx = { reducer: store.reducer, fire: store.fire, actions: store.actions };
                         const interceptor =
                             store.interceptors[action.type] !== undefined
                                 ? store.interceptors[action.type]
@@ -150,59 +156,57 @@ class Cabinets {
                             throw new InterceptorError("Error while executing interceptor prior to execute reducer.",
                                 { Store: store.name, "Interceptor for Action: ": action.type, State: store.state, Error: e.message });
                         }
- 
+
                         //3.
                         const reducerArgs = { state: store.state, payload: mapResult };
                         //4.
                         const { state, payload } = { ...reducerArgs, ...interResult };
 
                         //Notifying all subscriber
-                        function notify(){
+                        function notify() {
                             if (store.__subs__) {
-                            store.__subs__.forEach((sub) => {
-                                if (sub.deps && sub.deps.length > 0) {
-                                    for (const dep in sub.deps) {
-                                        const propName = sub.deps[dep];
+                                store.__subs__.forEach((sub) => {
+                                    if (sub.deps && sub.deps.length > 0) {
+                                        for (const dep in sub.deps) {
+                                            const propName = sub.deps[dep];
 
-                                        if (oldState[propName] !== store.state[propName]) {
-                                            sub.fn(store.state);
-                                            break;
+                                            if (oldState[propName] !== store.state[propName]) {
+                                                sub.fn(store.state);
+                                                break;
+                                            }
                                         }
-                                    }
-                                } else sub.fn(store.state);
-                            });
-                        }
+                                    } else sub.fn(store.state);
+                                });
+                            }
                         }
 
 
-                        try{
-                            if(actionType === "lazy"){
-                                  reducerFn(state, payload, ctx)
-                                  .then(state =>{
-                                      store.state = state;
-                                      notify();
-                                  })
-                            }else{
-                                store.state =  reducerFn(state, payload, ctx);
+                        try {
+                            if (actionType === "lazy") {
+                                reducerFn(state, payload, ctx)
+                                    .then(state => {
+                                        store.state = state;
+                                        notify();
+                                    })
+                            } else {
+                                store.state = reducerFn(state, payload, ctx);
                                 notify();
                             }
-                           
-                        }catch(e){
-                             throw new ReducerError("Error in Reducer Code.",
-                                { Store: store.name, "Reducer for Action: ": action.type, State: store.state,
-                                 Payload:action.payload,Error: e.message  });
+
+                        } catch (e) {
+                            throw new ReducerError("Error in Reducer Code.",
+                                {
+                                    Store: store.name, "Reducer for Action: ": action.type, State: store.state,
+                                    Payload: action.payload, Error: e.message
+                                });
                         }
-                        
-                        
-                        
 
                         return store.state;
                     }
+
                 } catch (e) {
                     console.error(
-                        `Error while executing reducer linked to action: ${action}`,
-                        e
-                    );
+                        `Error while executing reducer linked to action: ${action}`,  e );
 
                     if (e instanceof CabinetsError)
                         throw e;
@@ -230,46 +234,54 @@ class Cabinets {
                 name,
                 initState,
                 operations,
-                asyncOperations= {def: async (s, p) => p },
+                asyncOperations = { def: async (s, p) => p },
                 maps = { def: (s, p) => p },
-                interceptors = {}
+                interceptors = { def: (s, p) => p }
             }) {
-                const actions = Object.keys(operations)
-                    .map((op) => {
-                        const mapFn = maps[op] === undefined ? "def" : op;
-                        return { [op]: createAction(op, maps[mapFn]) };
-                    })
-                    .reduce((curr, acc) => {
-                        return { ...acc, ...curr };
-                    });
-                const lazyActions = Object.keys(asyncOperations)
-                    .map((lazyOp) => {
-                        const mapFn = maps[lazyOp] === undefined ? "def" : lazyOp;
-                        return { [lazyOp]: createAction(lazyOp, maps[mapFn]) };
-                    })
-                    .reduce((curr, acc,) => {
-                        return { ...acc, ...curr };
-                    });
-                const store = {
-                    name: name,
-                    state: initState,
-                    actions,
-                    lazyActions,
-                    reducer: initReducer(name, initState, operations),
-                    lazyReducer:initReducer(name, initState, asyncOperations),
-                    subscribe: (fn, deps) => subscribe(name, fn, deps),
-                    fire,
-                    lazyFire,
-                    maps,
-                    getState: () => {
-                        let str = $this.findStore(name);
-                        if (str) return str.state;
-                    },
-                    interceptors
-                };
 
-                $this.mount(store);
-                return limitedStore(store);
+                try {
+                    const actions = Object.keys(operations)
+                        .map((op) => {
+                            const mapFn = maps[op] === undefined ? "def" : op;
+                            return { [op]: createAction(op, maps[mapFn]) };
+                        })
+                        .reduce((curr, acc) => {
+                            return { ...acc, ...curr };
+                        });
+                    const lazyActions = Object.keys(asyncOperations)
+                        .map((lazyOp) => {
+                            const mapFn = maps[lazyOp] === undefined ? "def" : lazyOp;
+                            return { [lazyOp]: createAction(lazyOp, maps[mapFn]) };
+                        })
+                        .reduce((curr, acc,) => {
+                            return { ...acc, ...curr };
+                        });
+                    const store = {
+                        name: name,
+                        state: initState,
+                        actions,
+                        lazyActions,
+                        reducer: initReducer(name, initState, operations),
+                        lazyReducer: initReducer(name, initState, asyncOperations),
+                        subscribe: (fn, deps) => subscribe(name, fn, deps),
+                        fire,
+                        lazyFire,
+                        maps,
+                        getState: () => {
+                            let str = $this.findStore(name);
+                            if (str) return str.state;
+                        },
+                        interceptors
+                    };
+
+                    $this.mount(store);
+                    return limitedStore(store);
+
+                } catch (e) {
+                    throw new SetupStoreError("Error while Setting Up Store",
+                        { Store: name, Operations: operations, State: initState, Error: e.message });
+                }
+
             }
             const combiner = (items) =>
                 items.reduce((ac, curr) => {
@@ -291,7 +303,7 @@ class Cabinets {
 
             function combineReducers(reducers) {
                 return combiner(reducers);
-            } 
+            }
 
             function combineStores(name, ...limitedStores) {
                 const stores = limitedStores.map((limStore) =>
