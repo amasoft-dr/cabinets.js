@@ -12,7 +12,7 @@ const counterStore = {
 const counterStoreWithMaps = {
     ...counterStore,
     name: "counterStoreMaps",
-    maps:{
+    maps: {
         increment: (state, payload) => payload + 5
     }
 };
@@ -20,7 +20,7 @@ const counterStoreWithMaps = {
 const counterStoreWithDefMap = {
     ...counterStore,
     name: "counterStoreWithDefMap",
-    maps:{
+    maps: {
         increment: (state, payload) => payload + 5,
         def: (state, payload) => payload + 2
     }
@@ -30,28 +30,28 @@ const counterStoreWithDefMap = {
 const counterStoreWithInterceptors = {
     ...counterStore,
     name: "counterStoreWithInterceptors",
-    interceptors:{
+    interceptors: {
         increment: (state, payload) => {
-            state  = 10;
-            payload = state * 2 + payload;         
-            return {state, payload};
+            state = 10;
+            payload = state * 2 + payload;
+            return { state, payload };
         }
-        
+
     }
 };
 
 const counterStoreWithInterAndDefInter = {
-      ...counterStore,
+    ...counterStore,
     name: "counterStoreWithInterAndDefInter",
-    interceptors:{
+    interceptors: {
         increment: (state, payload) => {
-            payload += 10;       
-            return {state, payload};
+            payload += 10;
+            return { state, payload };
         },
-        def: (state, payload) => {return {state, payload:payload -1}}
-        
+        def: (state, payload) => { return { state, payload: payload - 1 } }
+
     }
-   
+
 };
 
 const lazyCounterStore = {
@@ -133,11 +133,11 @@ it("Checks state with both configured action interceptor and default one", () =>
     expect(getState()).toBe(3);
 });
 
-it("Check asyn state changes",async ()=>{
-   const {lazyActions, lazyFire, getState} = setupStore(lazyCounterStore);
-   const state = await  lazyFire(lazyActions.increment(10));
-  expect(getState()).toBe(10);
-  expect(getState()).toBe(state);
+it("Check asyn state changes", async () => {
+    const { lazyActions, lazyFire, getState } = setupStore(lazyCounterStore);
+    const state = await lazyFire(lazyActions.increment(10));
+    expect(getState()).toBe(10);
+    expect(getState()).toBe(state);
 
 });
 
