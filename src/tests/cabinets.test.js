@@ -136,7 +136,7 @@ it("Checks state with both configured action interceptor and default one", () =>
 it("Check asyn state changes",async ()=>{
    const {lazyActions, lazyFire, getState} = setupStore(lazyCounterStore);
    const state = await  lazyFire(lazyActions.increment(10));
-  expect(state).toBe(11);
+  expect(state).toBe(10);
 
 });
 
