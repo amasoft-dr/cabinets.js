@@ -17,6 +17,16 @@ const counterStoreWithMaps = {
     }
 };
 
+const counterStoreWithDefMap = {
+    ...counterStore,
+    name: "counterStoreWithDefMap",
+    maps:{
+        increment: (state, payload) => payload + 5,
+        def: (state, payload) => payload + 2
+    }
+};
+
+
 const counterStoreWithInterceptors = {
     ...counterStore,
     name: "counterStoreWithInterceptors",
@@ -44,25 +54,14 @@ const counterStoreWithInterAndDefInter = {
    
 };
 
-const commentsStore = {
-    name: "comments",
-    initState: [],
-    operations: {
-        comment: (state, comment) => [...state, comment],
-        removeComent: (state, id) => state.filter(comment => comment.id !== id)
-    },
-    maps: {
-        //#1
-        comment: (payload) => {
-            //Converting simple String for comment reducer, into a msg object to be passed to the
-            //comment reducer.
-            const id = [...payload].map(c => c.charCodeAt(0)).join("") + "_" + new Date().getTime();
-            return { msg: payload, id, date: new Date() }
-        }
+const lazyCounterStore = {
+    name: "lazyCounterStore",
+    initState: 0,
+    lazyOperations: {
+        increment: async (state, payload) => state + payload,
+        decrement: async (state, payload) => state - payload
     }
-
-}
-
+};
 
 
 it("Setups and uses Cabinets store", () => {
@@ -88,26 +87,14 @@ it("Checks if reducer map function was called", () => {
     expect(getState()).toBe(15);
 });
 
-it("Checks if specific action Interceptor  was invoked", () => {
-    setupStore(counterStoreWithInterceptors);
-    const { fire, actions, getState } = useStore("counterStoreWithInterceptors");
-    //1. Interceptor Change State to 10,
-    //2. Inteceptor Change the Payload to: 2 * 10 + 10 = 30
-    //3. Reducer sums 30 from payload to existing 10 from state.
-    //Result should be: 40
-    fire(actions.increment(10));
-    expect(getState()).toBe(40);
-});
-
-it("Checks state after firing action with no configured interceptor", () => {
-    setupStore(counterStoreWithInterceptors);
-    const { fire, actions, getState } = useStore("counterStoreWithInterceptors");
-    //1. Default interceptor changes substracts 1 form payload
+it("Checks if no error while firing action with no associated map", () => {
+    //Using store from previous test.
+    const { fire, actions, getState } = useStore("counterStoreMaps");
     fire(actions.decrement(10));
-    expect(getState()).toBe(-10);
+    expect(getState()).toBe(5);
 });
 
-it("Checks state with both configured action interceptor and default one", () => {
+it("Checks state with both configured action map and default one", () => {
     setupStore(counterStoreWithInterAndDefInter);
     const { fire, actions, getState } = useStore("counterStoreWithInterAndDefInter");
     //1.increment interceptor adds 10 to payload.
@@ -118,6 +105,40 @@ it("Checks state with both configured action interceptor and default one", () =>
     expect(getState()).toBe(11);
 });
 
+it("Checks if specific action Interceptor  was invoked", () => {
+    setupStore(counterStoreWithInterceptors);
+    const { fire, actions, getState } = useStore("counterStoreWithInterceptors");
+    //1. Interceptor Change State to 10,
+    //2. Inteceptor Change the Payload to: 2 * 10 + 10 = 30
+    //3. Reducer sums 30 from payload to existing 10 from state.
+    //Result should be: 130
+    fire(actions.increment(100));
+    expect(getState()).toBe(130);
+});
+
+it("Checks state after firing action with no configured interceptor", () => {
+    const { fire, actions, getState } = setupStore(counterStoreWithInterceptors);
+    //1. Default interceptor changes substracts 1 form payload
+    fire(actions.decrement(10));
+    expect(getState()).toBe(-10);
+});
+
+it("Checks state with both configured action interceptor and default one", () => {
+    const { fire, actions, getState } = setupStore(counterStoreWithDefMap);
+    //1. Mapping map adds 5 to payload.
+    fire(actions.increment(10));
+    expect(getState()).toBe(15);
+    //2. Default map  substracts 1 form payload
+    fire(actions.decrement(10));
+    expect(getState()).toBe(3);
+});
+
+it("Check asyn state changes",async ()=>{
+   const {lazyActions, lazyFire, getState} = setupStore(lazyCounterStore);
+   const state = await  lazyFire(lazyActions.increment(10));
+  expect(state).toBe(11);
+
+});
 
 
 

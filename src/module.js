@@ -121,7 +121,7 @@ class Cabinets {
 
                     //Todo: Error Handling
                     if (store) {
-                        const reducerFn = store.reducer[action.type];
+                        const reducerFn = store.reducer[action.type] || store.lazyReducer[action.type];
                         const ctx = { reducer: store.reducer, fire: store.fire, actions: store.actions };
                         const interceptor =
                             store.interceptors[action.type] !== undefined
@@ -189,7 +189,8 @@ class Cabinets {
                                     .then(state => {
                                         store.state = state;
                                         notify();
-                                    })
+                                    });
+                                return reducerFn;
                             } else {
                                 store.state = reducerFn(state, payload, ctx);
                                 notify();
@@ -235,9 +236,9 @@ class Cabinets {
             function setupStore({
                 name,
                 initState,
-                operations,
+                operations = {},
                 maps = {},
-                asyncOperations = {},
+                lazyOperations = {},
                 interceptors = { }
             }) {
 
@@ -245,32 +246,34 @@ class Cabinets {
                     //Setting default maps, interceptors and asyncOperations
                     maps = {def: (s, p) => p, ...maps };
                     interceptors = {def: (s, p) => {s,p} , ...interceptors};
-                    asyncOperations = { def: async (s, p) => p, ...asyncOperations };
+                    lazyOperations = { def: async (s, p) => p, ...lazyOperations };
                     //End Setting up defaults.
 
-                    const actions = Object.keys(operations)
+                    const actions =  Object.keys(operations)
                         .map((op) => {
                             const mapFn = maps[op] === undefined ? "def" : op;
                             return { [op]: createAction(op, maps[mapFn], name) };
                         })
                         .reduce((curr, acc) => {
                             return { ...acc, ...curr };
-                        });
-                    const lazyActions = Object.keys(asyncOperations)
+                        },null);
+
+                    const lazyActions = Object.keys(lazyOperations)
                         .map((lazyOp) => {
                             const mapFn = maps[lazyOp] === undefined ? "def" : lazyOp;
-                            return { [lazyOp]: createAction(lazyOp, maps[mapFn]) };
+                            return { [lazyOp]: createAction(lazyOp, maps[mapFn], name) };
                         })
                         .reduce((curr, acc,) => {
                             return { ...acc, ...curr };
-                        });
+                        },null);
+
                     const store = {
                         name,
                         state: initState,
                         actions,
                         lazyActions,
                         reducer: initReducer(name, initState, operations),
-                        lazyReducer: initReducer(name, initState, asyncOperations),
+                        lazyReducer: initReducer(name, initState, lazyOperations),
                         subscribe: (fn, deps) => subscribe(name, fn, deps),
                         fire,
                         lazyFire,
