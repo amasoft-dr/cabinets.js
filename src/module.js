@@ -72,13 +72,14 @@ class Cabinets {
         }
         //End Custom Errors
         this.GlobalStore = () => {
-            function createAction(name, map = (s, p) => p) {
-                const type = { type: name };
+            function createAction(name, map = (s, p) => p, store) {
+             
                 const action = (payload) => {
                     const defActionReturn = {
-                        ...type,
+                        type:name,
                         map: map,
-                        toString: () => type.type
+                        store,
+                        toString: () => `${store}.${name}`
                     };
                     if (payload) {
                         return { ...defActionReturn, payload: payload };
@@ -111,8 +112,9 @@ class Cabinets {
             function dispatch(action, actionType = "actions") {
                 let store;
                 try {
+                    //cconsole.log(action);
                     store = Object.values($this.getStores()).find(
-                        (store) => store[actionType][action]
+                        (store) => store.name === action.store
                     );
                     const oldState =
                         typeof store.state === "object" ? { ...store.state } : store.state;
@@ -226,7 +228,7 @@ class Cabinets {
             }
 
             function limitedStore(store) {
-                const { state, maps, interceptors, reducer, ...rest } = store;
+                const { state, maps, interceptors, reducer,lazyReducer, ...rest } = store;
                 return rest;
             }
 
@@ -243,7 +245,7 @@ class Cabinets {
                     const actions = Object.keys(operations)
                         .map((op) => {
                             const mapFn = maps[op] === undefined ? "def" : op;
-                            return { [op]: createAction(op, maps[mapFn]) };
+                            return { [op]: createAction(op, maps[mapFn], name) };
                         })
                         .reduce((curr, acc) => {
                             return { ...acc, ...curr };

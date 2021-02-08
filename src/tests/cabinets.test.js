@@ -17,7 +17,7 @@ const counterStoreWithMaps = {
         decrement: (state, payload) => state - payload
     },
     maps:{
-        increment: (payload) => payload + 5
+        increment: (state, payload) => payload + 5
     }
 };
 
@@ -52,15 +52,16 @@ it("Setups and uses Cabinets store", () => {
 it("Fires actions and checks state changes", () => {
     const { fire, actions, getState } = useStore("counterStore");
     fire(actions.increment(10));
+    fire(actions.increment(10));
     fire(actions.decrement(5));
-    expect(getState()).toBe(5);
+    fire(actions.increment(5));
+    expect(getState()).toBe(20);
 });
 
 it("Checks if reducer map function was called", () => {
     const store = setupStore(counterStoreWithMaps);
-    console.log(store);
+   // console.log(store);
     const { fire, actions, getState } = useStore("counterStoreMaps");
-    console.log(actions);
     fire(actions.increment(10));
     expect(getState()).toBe(15);
 });
