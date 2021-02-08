@@ -73,10 +73,10 @@ class Cabinets {
         //End Custom Errors
         this.GlobalStore = () => {
             function createAction(name, map = (s, p) => p, store) {
-             
+
                 const action = (payload) => {
                     const defActionReturn = {
-                        type:name,
+                        type: name,
                         map: map,
                         store,
                         toString: () => `${store}.${name}`
@@ -102,14 +102,14 @@ class Cabinets {
             //function initStore(){
             //}
             async function lazyFire(action) {
-                return dispatch(action, "lazyActions");
+                return dispatch(action, "async");
             }
 
             function fire(action) {
                 return dispatch(action);
             }
 
-            function dispatch(action, actionType = "actions") {
+            function dispatch(action, actionType = "sync") {
                 let store;
                 try {
                     //cconsole.log(action);
@@ -184,13 +184,14 @@ class Cabinets {
 
 
                         try {
-                            if (actionType === "lazy") {
-                                reducerFn(state, payload, ctx)
+                            if (actionType === "async") {
+                                return reducerFn(state, payload, ctx)
                                     .then(state => {
                                         store.state = state;
                                         notify();
+                                        return store.state;
                                     });
-                                return reducerFn;
+
                             } else {
                                 store.state = reducerFn(state, payload, ctx);
                                 notify();
@@ -209,7 +210,7 @@ class Cabinets {
 
                 } catch (e) {
                     console.error(
-                        `Error while executing reducer linked to action: ${action}`,  e );
+                        `Error while executing reducer linked to action: ${action}`, e);
 
                     if (e instanceof CabinetsError)
                         throw e;
@@ -229,7 +230,7 @@ class Cabinets {
             }
 
             function limitedStore(store) {
-                const { state, maps, interceptors, reducer,lazyReducer, ...rest } = store;
+                const { state, maps, interceptors, reducer, lazyReducer, ...rest } = store;
                 return rest;
             }
 
@@ -239,24 +240,24 @@ class Cabinets {
                 operations = {},
                 maps = {},
                 lazyOperations = {},
-                interceptors = { }
+                interceptors = {}
             }) {
 
                 try {
                     //Setting default maps, interceptors and asyncOperations
-                    maps = {def: (s, p) => p, ...maps };
-                    interceptors = {def: (s, p) => {s,p} , ...interceptors};
+                    maps = { def: (s, p) => p, ...maps };
+                    interceptors = { def: (s, p) => { s, p }, ...interceptors };
                     lazyOperations = { def: async (s, p) => p, ...lazyOperations };
                     //End Setting up defaults.
 
-                    const actions =  Object.keys(operations)
+                    const actions = Object.keys(operations)
                         .map((op) => {
                             const mapFn = maps[op] === undefined ? "def" : op;
                             return { [op]: createAction(op, maps[mapFn], name) };
                         })
                         .reduce((curr, acc) => {
                             return { ...acc, ...curr };
-                        },null);
+                        }, null);
 
                     const lazyActions = Object.keys(lazyOperations)
                         .map((lazyOp) => {
@@ -265,7 +266,7 @@ class Cabinets {
                         })
                         .reduce((curr, acc,) => {
                             return { ...acc, ...curr };
-                        },null);
+                        }, null);
 
                     const store = {
                         name,
