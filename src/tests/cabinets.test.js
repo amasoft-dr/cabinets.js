@@ -10,14 +10,24 @@ const counterStore = {
 };
 
 const counterStoreWithMaps = {
+    ...counterStore,
     name: "counterStoreMaps",
-    initState: 0,
-    operations: {
-        increment: (state, payload) => state + payload,
-        decrement: (state, payload) => state - payload
-    },
     maps:{
         increment: (state, payload) => payload + 5
+    }
+};
+
+const counterStoreWithInterceptors = {
+    ...counterStore,
+    name: "counterStoreWithInterceptors",
+    interceptors:{
+        increment: (state, payload) => {
+            state  = 10;
+            payload = state * 2 + payload;         
+            return {state, payload};
+        },
+        def: (state, payload) => {return {state, payload:payload -1}}
+        
     }
 };
 
@@ -59,10 +69,20 @@ it("Fires actions and checks state changes", () => {
 });
 
 it("Checks if reducer map function was called", () => {
-    const store = setupStore(counterStoreWithMaps);
-   // console.log(store);
+    setupStore(counterStoreWithMaps);
     const { fire, actions, getState } = useStore("counterStoreMaps");
     fire(actions.increment(10));
     expect(getState()).toBe(15);
+});
+
+it("Checks if both specific Interceptor and default interceptor were called", () => {
+    setupStore(counterStoreWithInterceptors);
+    const { fire, actions, getState } = useStore("counterStoreWithInterceptors");
+    //1. Interceptor Change State to 10,
+    //2. Inteceptor Change the Payload to: 2 * 10 + 10 = 30
+    //3. Reducer sums 30 from payload to existing 10 from state.
+    //Result should be: 40
+    fire(actions.increment(10));
+    expect(getState()).toBe(40);
 });
 
