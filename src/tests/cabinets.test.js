@@ -25,10 +25,23 @@ const counterStoreWithInterceptors = {
             state  = 10;
             payload = state * 2 + payload;         
             return {state, payload};
+        }
+        
+    }
+};
+
+const counterStoreWithInterAndDefInter = {
+      ...counterStore,
+    name: "counterStoreWithInterAndDefInter",
+    interceptors:{
+        increment: (state, payload) => {
+            payload += 10;       
+            return {state, payload};
         },
         def: (state, payload) => {return {state, payload:payload -1}}
         
     }
+   
 };
 
 const commentsStore = {
@@ -75,7 +88,7 @@ it("Checks if reducer map function was called", () => {
     expect(getState()).toBe(15);
 });
 
-it("Checks if both specific Interceptor and default interceptor were called", () => {
+it("Checks if specific action Interceptor  was invoked", () => {
     setupStore(counterStoreWithInterceptors);
     const { fire, actions, getState } = useStore("counterStoreWithInterceptors");
     //1. Interceptor Change State to 10,
@@ -85,4 +98,26 @@ it("Checks if both specific Interceptor and default interceptor were called", ()
     fire(actions.increment(10));
     expect(getState()).toBe(40);
 });
+
+it("Checks state after firing action with no configured interceptor", () => {
+    setupStore(counterStoreWithInterceptors);
+    const { fire, actions, getState } = useStore("counterStoreWithInterceptors");
+    //1. Default interceptor changes substracts 1 form payload
+    fire(actions.decrement(10));
+    expect(getState()).toBe(-10);
+});
+
+it("Checks state with both configured action interceptor and default one", () => {
+    setupStore(counterStoreWithInterAndDefInter);
+    const { fire, actions, getState } = useStore("counterStoreWithInterAndDefInter");
+    //1.increment interceptor adds 10 to payload.
+    fire(actions.increment(10));
+    expect(getState()).toBe(20);
+    //2. Default interceptor  substracts 1 form payload
+    fire(actions.decrement(10));
+    expect(getState()).toBe(11);
+});
+
+
+
 

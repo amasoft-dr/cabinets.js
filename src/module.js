@@ -236,12 +236,18 @@ class Cabinets {
                 name,
                 initState,
                 operations,
-                asyncOperations = { def: async (s, p) => p },
-                maps = { def: (s, p) => p },
-                interceptors = { def: (s, p) => p }
+                maps = {},
+                asyncOperations = {},
+                interceptors = { }
             }) {
 
                 try {
+                    //Setting default maps, interceptors and asyncOperations
+                    maps = {def: (s, p) => p, ...maps };
+                    interceptors = {def: (s, p) => {s,p} , ...interceptors};
+                    asyncOperations = { def: async (s, p) => p, ...asyncOperations };
+                    //End Setting up defaults.
+
                     const actions = Object.keys(operations)
                         .map((op) => {
                             const mapFn = maps[op] === undefined ? "def" : op;
@@ -259,7 +265,7 @@ class Cabinets {
                             return { ...acc, ...curr };
                         });
                     const store = {
-                        name: name,
+                        name,
                         state: initState,
                         actions,
                         lazyActions,
@@ -275,7 +281,6 @@ class Cabinets {
                         },
                         interceptors
                     };
-
                     $this.mount(store);
                     return limitedStore(store);
 
