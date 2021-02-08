@@ -320,6 +320,7 @@ class Cabinets {
                 const stores = limitedStores.map((limStore) =>
                     $this.findStore(limStore.name)
                 );
+                
                 const allReducers = combineReducers(
                     stores.map((store) => store.reducer)
                 );

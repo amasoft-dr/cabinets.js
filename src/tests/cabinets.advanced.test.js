@@ -1,15 +1,15 @@
-import { setupStore, useStore } from "../module.js";
+import { setupStore, combineStores, useStore } from "../module.js";
 
 class LocalStorage {
-    constructor(){
+    constructor() {
         this.data = {}
     }
-    set(name, value){
-        this.data[name] = JSON.stringify(value) ;
+    set(name, value) {
+        this.data[name] = JSON.stringify(value);
     }
 
-    get(name){
-      return this.data[name];
+    get(name) {
+        return this.data[name];
     }
 
 };
@@ -56,12 +56,26 @@ const blogStore = {
             return { ...entry, id, creationDate: new Date() };
         }
     },
-    interceptors:{
-        addArticle: (state, payload)=> {
-            localStorage.set("article_backups", {state, payload, lastUpdate:new Date()});
+    interceptors: {
+        addArticle: (state, payload) => {
+            localStorage.set("article_backups", { state, payload, lastUpdate: new Date() });
         }
     }
 };
+
+const counterStore = {
+    name: "counterStore",
+    initState: 0,
+    operations: {
+        increment: (state, payload) => state + payload,
+        decrement: (state, payload) => state - payload
+    }, 
+    lazyOperations: {
+        increment: async (state, payload) => state + payload,
+        decrement: async (state, payload) => state - payload
+    }
+};
+
 
 
 it("Setting Up and Finding Complex Store", () => {
@@ -116,6 +130,23 @@ it("Checks if default map was executed in Complex Store", () => {
 it("Checks if action's interceptor is executing in Complex Store", () => {
     //Hence we defined an interceptor to backup always our blog state, payload
     //and it also adds a lastUpdate field, let's see our fake localStorage.
-    const blogBackup = JSON.parse(localStorage.get("article_backups") );
+    const blogBackup = JSON.parse(localStorage.get("article_backups"));
     expect(blogBackup).toHaveProperty("lastUpdate");
 });
+
+it("Checks if it's possible to combine stores", () => {
+    //blogStore was set up during past tests, so
+    //let's set up now counterStore
+    const blogStateStore = useStore("blogStore");
+    const counterStateStore = setupStore(counterStore);
+    //It is important to first pass the name to the new
+    //combined-store, then all stores to be combined.
+    const blogCounterStore = combineStores("blogAndCounterStore",
+                                            blogStateStore,
+                                            counterStateStore);
+
+    const { fire, actions, getState } = blogCounterStore;
+    expect(getState()).toHaveProperty("blogStore.blog");
+    expect(getState()).toHaveProperty("counterStore");
+
+})
