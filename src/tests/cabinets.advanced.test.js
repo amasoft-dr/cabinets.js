@@ -63,16 +63,32 @@ const blogStore = {
     }
 };
 
+const blogStore2 = {
+    ...blogStore,
+    name: "blog"
+}
 const counterStore = {
-    name: "counterStore",
+    name: "counter",
     initState: 0,
     operations: {
-        increment: (state, payload) => state + payload,
-        decrement: (state, payload) => state - payload
-    }, 
+        increment: (state, payload) => {
+            state.counter += payload
+            return state;
+        },
+        decrement: (state, payload) => {
+            state.counter -= payload;
+            return state;
+        }
+    },
     lazyOperations: {
-        increment: async (state, payload) => state + payload,
-        decrement: async (state, payload) => state - payload
+      increment: async (state, payload) => {
+            state.counter += payload
+            return state;
+        },
+        decrement: async (state, payload) => {
+            state.counter -= payload;
+            return state;
+        }
     }
 };
 
@@ -137,16 +153,19 @@ it("Checks if action's interceptor is executing in Complex Store", () => {
 it("Checks if it's possible to combine stores", () => {
     //blogStore was set up during past tests, so
     //let's set up now counterStore
-    const blogStateStore = useStore("blogStore");
+    const blogStateStore = setupStore(blogStore2);
     const counterStateStore = setupStore(counterStore);
     //It is important to first pass the name to the new
     //combined-store, then all stores to be combined.
     const blogCounterStore = combineStores("blogAndCounterStore",
-                                            blogStateStore,
-                                            counterStateStore);
+        blogStateStore,
+        counterStateStore);
 
     const { fire, actions, getState } = blogCounterStore;
-    expect(getState()).toHaveProperty("blogStore.blog");
-    expect(getState()).toHaveProperty("counterStore");
+    expect(getState()).toHaveProperty("blog");
+    expect(getState()).toHaveProperty("counter");
+
+    fire(actions.increment(10));
+    expect(getState().counter).toBe(10);
 
 })
