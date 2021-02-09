@@ -71,7 +71,7 @@ class Cabinets {
       }
     }
     //End Custom Errors
-    this.GlobalStore = () => {
+    this.initGlobalStore = () => {
       function createAction(name, map = (s, p) => p, store) {
 
         const action = (payload) => {
@@ -112,7 +112,6 @@ class Cabinets {
       function dispatch(action, actionType = "sync") {
         let store;
         try {
-          //cconsole.log(action);
           store = Object.values($this.getStores()).find(
             (store) => store.name === action.store
           );
@@ -121,7 +120,7 @@ class Cabinets {
 
           //Todo: Error Handling
           if (store) {
-            const reducerFn = store.reducer[action.type] || store.lazyReducer[action.type];
+            const reducerFn = actionType === "sync" ? store.reducer[action.type] : store.lazyReducer[action.type];
             const ctx = { reducer: store.reducer, fire: store.fire, actions: store.actions };
             const interceptor =
               store.interceptors[action.type] !== undefined
@@ -174,7 +173,6 @@ class Cabinets {
 
                       if (oldState[propName] !== store.state[propName]) {
                         sub.fn(store.state);
-                        break;
                       }
                     }
                   } else sub.fn(store.state);
@@ -225,8 +223,14 @@ class Cabinets {
         let store = $this.findStore(storeName);
         if (store.__subs__ === undefined) store.__subs__ = [];
 
-        if (store.__subs__.indexOf(fn) === -1)
-          store.__subs__.push({ fn, deps });
+        if (!store.__subs__.find(sub => sub.fn === fn) )
+             store.__subs__.push({ fn, deps });
+      }
+
+      function unsubscribe(storeName, fn){
+           if (fn === undefined) return;
+           let store = $this.findStore(storeName);
+            store.__subs__ = store.__subs__.filter( sub => sub.fn !== fn);
       }
 
       function limitedStore(store) {
@@ -240,17 +244,17 @@ class Cabinets {
         operations = {},
         maps = { _def_impl: true },
         lazyOperations = {},
-        interceptors = { _def_impl: true}
+        interceptors = { _def_impl: true }
       }) {
 
         try {
-          //Setting default maps, interceptors and asyncOperations
+          //Setting default maps, interceptors
           maps = { def: (s, p) => p, ...maps };
           interceptors = { def: (s, p) => { s, p }, ...interceptors };
           //End Setting up defaults.
 
           const actions = Object.keys(operations)
-            .map((op) => {
+            .map(op => {
               const mapFn = maps[op] === undefined ? "def" : op;
               return { [op]: createAction(op, maps[mapFn], name) };
             })
@@ -259,7 +263,7 @@ class Cabinets {
             }, null);
 
           const lazyActions = Object.keys(lazyOperations)
-            .map((lazyOp) => {
+            .map(lazyOp => {
               const mapFn = maps[lazyOp] === undefined ? "def" : lazyOp;
               return { [lazyOp]: createAction(lazyOp, maps[mapFn], name) };
             })
@@ -275,6 +279,7 @@ class Cabinets {
             reducer: initReducer(name, initState, operations),
             lazyReducer: initReducer(name, initState, lazyOperations),
             subscribe: (fn, deps) => subscribe(name, fn, deps),
+            unsubscribe: (fn) => unsubscribe(name, fn),
             fire,
             lazyFire,
             maps,
@@ -330,15 +335,15 @@ class Cabinets {
         );
 
         const allMaps = combiner(
-            stores.filter(store => !store.maps._def_impl)
+          stores.filter(store => !store.maps._def_impl)
             .map((store) => store.maps)
         );
-    
+
         const allInterceptors = combiner(
           stores.filter(store => !store.interceptors._def_impl)
-          .map((store) => store.interceptors)
+            .map((store) => store.interceptors)
         );
-  
+
         const combinedName =
           name === undefined
             ? stores.map((store) => `${store.name}`).join("-")
@@ -377,13 +382,19 @@ class Cabinets {
         return store;
       }
 
-      //Exporting important functions that can be used invkoking GlobalStore
+      //Exporting important functions that can be used invkoking initGlobalStore
       return {
         setupStore,
         combineStores,
         limitedStore,
         initReducer,
-        createAction
+        createAction,
+        CabinetsError,
+        ReducerError,
+        InterceptorError,
+        MappingError,
+        AsyncActionError,
+        SetupStoreError
       };
     };
   }
@@ -392,10 +403,17 @@ class Cabinets {
 const cabinet = new Cabinets();
 
 //Defining external API
-
-export const { setupStore, combineStores } = cabinet.GlobalStore();
+const globalStore =  cabinet.initGlobalStore();
+export const {  setupStore, 
+                combineStores, 
+                CabinetsError,
+                ReducerError,
+                InterceptorError,
+                MappingError,
+                AsyncActionError,
+                SetupStoreError } = globalStore;
 
 export function useStore(name) {
-  const { limitedStore } = cabinet.GlobalStore();
+  const { limitedStore } = globalStore;
   return limitedStore(cabinet.findStore(name));
 }

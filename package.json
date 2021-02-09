@@ -4,7 +4,7 @@
   "description": "A simple but powerful global state management library.",
   "main": "lib/module.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --coverage",
     "build": "npm run test && webpack --mode production",
     "prepublish": "npm run build"
   },

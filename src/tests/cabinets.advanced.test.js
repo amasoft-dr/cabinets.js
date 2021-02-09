@@ -1,4 +1,5 @@
 import { setupStore, combineStores, useStore } from "../module.js";
+import { ReducerError, SetupStoreError, InterceptorError, MappingError } from "../module.js";
 
 class LocalStorage {
     constructor() {
@@ -181,8 +182,9 @@ it("Checks if it's possible to combine stores", () => {
     //It is important to first pass the name to the new
     //combined-store, then all stores to be combined.
     const blogCounterStore = combineStores("blogAndCounterStore",
-        blogStateStore,
-        counterStateStore);
+                                            blogStateStore,
+                                            counterStateStore
+                                          );
 
     const { fire, actions, getState } = blogCounterStore;
     expect(getState()).toHaveProperty("blog");
@@ -194,16 +196,19 @@ it("Checks if it's possible to combine stores", () => {
     const article = {title : "I'm Eudys",
                      text : "Hello Everybody, I'm a dev from @Amasoft",
                      author: "@eudys"};
-
     fire(actions.addArticle(article));
-
     const foundArticle = getState().blog.articles.find(art => art.author === "@eudys");
-
     expect(foundArticle).toHaveProperty("id");
     expect(foundArticle).toHaveProperty("creationDate");
 
+});
 
-
+it("Checks if lazy operations are working in combined-stores", async () => {
+    const { lazyActions, lazyFire, getState } = useStore("blogAndCounterStore");
+    //state.counter is 10...
+    const state = await lazyFire(lazyActions.increment(10));
+    expect(getState().counter).toBe(20);
+    expect(getState()).toBe(state);
 });
 
 it("Checks if action's interceptor is executing in combinged-store", () => {
@@ -212,3 +217,102 @@ it("Checks if action's interceptor is executing in combinged-store", () => {
     const blogBackup = JSON.parse(localStorage.get("article_backups2"));
     expect(blogBackup).toHaveProperty("lastUpdate");
 });
+
+it("Checks if subscribe/notify is working wen state change...", done => {
+    const { actions, fire, getState, subscribe , unsubscribe} = useStore("blogAndCounterStore");
+    //state.counter is 20...
+    const notifyme = state => {
+       expect(getState().counter).toBe(30);
+       expect(getState()).toBe(state);
+       done();
+    };
+    subscribe(notifyme);
+    fire(actions.increment(10));
+    unsubscribe(notifyme);
+   
+});
+
+it("Checks if subscribe/notify is working wen state prop change...", done => {
+    const { actions, fire, getState, subscribe } = useStore("blogAndCounterStore");
+    //state.counter is 30...
+    //Hence we are only subscribing when "blog" property change, cabinets.js
+    //won't notify and test pass, if we change "blog" for "counter" then we 
+    //will have an error because 48 is not 58.
+   subscribe( state => {
+       expect(getState().counter).toBe(58);
+       done();
+    },["blog"]);
+
+     fire(actions.increment(18));
+     done();
+   
+});
+//Testing Exceptions
+const problemReduceStore =  {
+    name: "problemReduceStore",
+    initState: "Hello ",
+    operations: {
+        sayHello: (state, payload) => state + payloads //Error here.
+    }
+        
+} ;
+
+const problemMapsStore =  {
+    name: "problemReduceStore",
+    initState: "Hello ",
+    operations: {
+        sayHello: (state, payload) => state + payload
+    },
+    maps:{
+        sayHello: (state, payload) => String.toUpperCase(payload) //Error here
+    }
+        
+} ;
+
+const problemInterceptorStore =  {
+    name: "problemReduceStore",
+    initState: "Hello ",
+    operations: {
+        sayHello: (state, payload) => state + payload
+    },
+    interceptors: {
+        sayHello: (state, payload) => {
+                        state.salutation.hindi = "Namaste";
+                        return {state, payload};
+                }
+    }
+        
+} ;
+
+it("Checks ReducerError", ()=> { 
+   const t = () => {
+       const {fire, actions} = setupStore(problemReduceStore);
+       fire(actions.sayHello());
+   };
+   expect(t).toThrow(ReducerError);
+});
+
+it("Checks MappingError", ()=> { 
+   const t = () => {
+       const {fire, actions} = setupStore(problemMapsStore);
+       fire(actions.sayHello());
+   };
+   expect(t).toThrow(MappingError);
+});
+
+
+it("Checks InterceptorError", ()=> { 
+   const t = () => {
+       const {fire, actions} = setupStore(problemInterceptorStore);
+       fire(actions.sayHello());
+   };
+   expect(t).toThrow(InterceptorError);
+});
+
+it("Checks SetupError", ()=>{
+    const t = () => {
+       const {fire, actions} = setupStore({operations:null});
+    }
+    expect(t).toThrow(SetupStoreError);
+});
+
