@@ -39,12 +39,12 @@ const blogStore = {
         },
         addArticle: (state, newArticle) => {
             state.blog.articles = [...state.blog.articles, newArticle];
-            return { ...state };
+            return {...state};
         },
         removeComment: (state, articleId) => {
             state.blog.articles =
                 state.blog.articles.filter(article => article.id != articleId);
-            return { ...state };
+            return {...state};
         }
 
     },
@@ -53,7 +53,7 @@ const blogStore = {
         //Adding creation date.
         def: (state, entry) => {
             const id = strId(entry.author);
-            return { ...entry, id, creationDate: new Date() };
+            return { ...entry, id, creationDate: new Date() }; 
         }
     },
     interceptors: {
@@ -65,8 +65,30 @@ const blogStore = {
 
 const blogStore2 = {
     ...blogStore,
-    name: "blog"
+    name: "blog",
+    initState: {
+        comments: [],
+        articles: []
+    }, 
+    maps: {
+        //Creating specific maps to increment/decrement, to avoid def mapper
+        //tries to change the int payload spreading and generating an error...
+        increment: (state, payload)=> payload,
+        decrement: (state, payload) => payload,
+        //Adding a default map to modify the payload adding id to both comments and articles
+        //Adding creation date.
+        def: (state, entry) => {
+            const id = strId(entry.author);
+            return { ...entry, id, creationDate: new Date() }; 
+        }
+    },
+    interceptors: {
+        def: (state, payload) => {
+            localStorage.set("article_backups2", { ...state, payload, lastUpdate: new Date() });
+        }
+    }
 }
+
 const counterStore = {
     name: "counter",
     initState: 0,
@@ -85,7 +107,7 @@ const counterStore = {
             state.counter += payload
             return state;
         },
-        decrement: async (state, payload) => {
+        decrement: async(state, payload) => {
             state.counter -= payload;
             return state;
         }
@@ -127,13 +149,14 @@ it("Checks if default map was executed in Complex Store", () => {
 
     expect(article1).toHaveProperty("id");
     expect(article1).toHaveProperty("creationDate");
-
+    
     const comment = {
         text: "Thank you @andreidim", author: "@adpmaster",
         articleId: article1.id
     }
 
     fire(actions.addComment(comment));
+
     const comment1 = getState().blog.comments
         .find(comment => comment.author === "@adpmaster");
 
@@ -168,4 +191,24 @@ it("Checks if it's possible to combine stores", () => {
     fire(actions.increment(10));
     expect(getState().counter).toBe(10);
 
-})
+    const article = {title : "I'm Eudys",
+                     text : "Hello Everybody, I'm a dev from @Amasoft",
+                     author: "@eudys"};
+
+    fire(actions.addArticle(article));
+
+    const foundArticle = getState().blog.articles.find(art => art.author === "@eudys");
+
+    expect(foundArticle).toHaveProperty("id");
+    expect(foundArticle).toHaveProperty("creationDate");
+
+
+
+});
+
+it("Checks if action's interceptor is executing in combinged-store", () => {
+    //Hence we defined an interceptor to backup always our blog state, payload
+    //and it also adds a lastUpdate field, let's see our fake localStorage.
+    const blogBackup = JSON.parse(localStorage.get("article_backups2"));
+    expect(blogBackup).toHaveProperty("lastUpdate");
+});
