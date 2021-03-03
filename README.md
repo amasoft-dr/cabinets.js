@@ -1,18 +1,18 @@
-## Cabinets.js A Simple State Management Libary
-Cabinets is global state management library, it is not tied to any library or framework. It is simple to use but yet powerful.
+## Cabinets.js A Simple State Management Library for JS
+Cabinets.js is a global state management library, it is not tied to any library or framework. It is simple to use but yet powerful.
 
 ### To do List in Vanilla JS
 To do...
 
 ### It is designed to be simple
 
-In contrast with others state management libraries, it is desgined to be simple to use, it is intuitive, you don't even need
+In contrast with other state management libraries, it is designed to be simple to use, it is intuitive, you don't even need
 to read the whole documentation to get your app up and running with Cabinets.js
 
 ### It is not tied to any UI library
 
 It is not tied to any UI library like React or Vue, you can use it with plain-old-vanilla Javascript, and will work.
-However, we have a Cabinets-react.js which makes simple the integration with React.js. Please check **[Cabinets-reac.js](https://github.com/amasoft-dr/cabinets-react.js)** to check
+However, we have cabinets-react.js which makes simple integration with React.js. Please check **[Cabinets-react.js](https://github.com/amasoft-dr/cabinets-react.js)** to check
 this project.
 
 ### It does not have dependencies
@@ -280,7 +280,7 @@ myAnotherFunction();
 ```
 You can see, now the code it's cleaner and we also have fined-grained notification based on prop change. 
 This approach is good for small apps and/or single developer dedicated only to State development.
-This approach could result difficult to follow if you have too many operations, subs-stores, and different people writing your application code. It requires the same file, same store to be edited, an probably 
+This approach could result difficult to follow if you have too many operations, subs-stores, and different people writing your application code. It requires the same file, same-store to be edited, and probably 
 different devs can write their own substore and become
 a nightmare, imagine the frustration while merging.
 
@@ -291,7 +291,7 @@ This leads us to the 3rd approach, **Combining Store**
 
 When writing independent Stores that are going to be combined you need
 to set-up, your mind and know that they are going to be attached as a sub-store 
-on the root newly combined Store and you need a way to access your 
+on the root, newly combined Store and you need a way to access your 
 specific state sub-store because the state that is passed to maps, 
 interceptors and reducers will have  every sub-store attach to it, 
 so you can have access to all substores that are combined too,
@@ -403,15 +403,15 @@ myAnotherFunction();
 ```
 You can see that the 3rd and 2nd approach looks very similar using those stores.
 However, the 2nd one implementation it's better because it is more maintainable supports better
-team works, and probably it is more readable because you can have multiple small stores
+teamwork, and probably it is more readable because you can have multiple small stores
 then combine them instead of having a very big fat Store.
 
-### Maps: Changing payload prior to execute reducers
+### Maps: Changing payload prior to executing reducers
 todo...
 
 
 
-### Interceptors: Executing code after mappings is done an prior reducer is called
+### Interceptors: Executing code after mappings are done prior reducer is called
 Todo...
 
 
