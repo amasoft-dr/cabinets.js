@@ -40,12 +40,12 @@ const blogStore = {
         },
         addArticle: (state, newArticle) => {
             state.blog.articles = [...state.blog.articles, newArticle];
-            return {...state};
+            return { ...state };
         },
         removeComment: (state, articleId) => {
             state.blog.articles =
                 state.blog.articles.filter(article => article.id != articleId);
-            return {...state};
+            return { ...state };
         }
 
     },
@@ -54,7 +54,7 @@ const blogStore = {
         //Adding creation date.
         def: (state, entry) => {
             const id = strId(entry.author);
-            return { ...entry, id, creationDate: new Date() }; 
+            return { ...entry, id, creationDate: new Date() };
         }
     },
     interceptors: {
@@ -62,7 +62,7 @@ const blogStore = {
             localStorage.set("article_backups", { state, payload, lastUpdate: new Date() });
         }
     }
-};
+}
 
 const blogStore2 = {
     ...blogStore,
@@ -70,17 +70,17 @@ const blogStore2 = {
     initState: {
         comments: [],
         articles: []
-    }, 
+    },
     maps: {
         //Creating specific maps to increment/decrement, to avoid def mapper
         //tries to change the int payload spreading and generating an error...
-        increment: (state, payload)=> payload,
+        increment: (state, payload) => payload,
         decrement: (state, payload) => payload,
         //Adding a default map to modify the payload adding id to both comments and articles
         //Adding creation date.
         def: (state, entry) => {
             const id = strId(entry.author);
-            return { ...entry, id, creationDate: new Date() }; 
+            return { ...entry, id, creationDate: new Date() };
         }
     },
     interceptors: {
@@ -104,16 +104,25 @@ const counterStore = {
         }
     },
     lazyOperations: {
-      increment: async (state, payload) => {
+        increment: async (state, payload) => {
             state.counter += payload
             return state;
         },
-        decrement: async(state, payload) => {
+        decrement: async (state, payload) => {
             state.counter -= payload;
             return state;
         }
     }
-};
+}
+
+const basicCounterStore = {
+    name: "basicCounterStore",
+    initState: 0,
+    operations: {
+        increment: (state, payload) => state + payload,
+        decrement: (state, payload) => state - payload
+    }
+}
 
 
 
@@ -150,7 +159,7 @@ it("Checks if default map was executed in Complex Store", () => {
 
     expect(article1).toHaveProperty("id");
     expect(article1).toHaveProperty("creationDate");
-    
+
     const comment = {
         text: "Thank you @andreidim", author: "@adpmaster",
         articleId: article1.id
@@ -182,9 +191,9 @@ it("Checks if it's possible to combine stores", () => {
     //It is important to first pass the name to the new
     //combined-store, then all stores to be combined.
     const blogCounterStore = combineStores("blogAndCounterStore",
-                                            blogStateStore,
-                                            counterStateStore
-                                          );
+        blogStateStore,
+        counterStateStore
+    );
 
     const { fire, actions, getState } = blogCounterStore;
     expect(getState()).toHaveProperty("blog");
@@ -193,9 +202,11 @@ it("Checks if it's possible to combine stores", () => {
     fire(actions.increment(10));
     expect(getState().counter).toBe(10);
 
-    const article = {title : "I'm Eudys",
-                     text : "Hello Everybody, I'm a dev from @Amasoft",
-                     author: "@eudys"};
+    const article = {
+        title: "I'm Eudys",
+        text: "Hello Everybody, I'm a dev from @Amasoft",
+        author: "@eudys"
+    };
     fire(actions.addArticle(article));
     const foundArticle = getState().blog.articles.find(art => art.author === "@eudys");
     expect(foundArticle).toHaveProperty("id");
@@ -218,58 +229,92 @@ it("Checks if action's interceptor is executing in combinged-store", () => {
     expect(blogBackup).toHaveProperty("lastUpdate");
 });
 
-it("Checks if subscribe/notify is working wen state change...", done => {
-    const { actions, fire, getState, subscribe , unsubscribe} = useStore("blogAndCounterStore");
+it("Checks if subscribe/notify is working when state change...", done => {
+    const { actions, fire, getState, subscribe, unsubscribe } = useStore("blogAndCounterStore");
     //state.counter is 20...
     const notifyme = state => {
-       expect(getState().counter).toBe(30);
-       expect(getState()).toBe(state);
-       done();
+        expect(getState().counter).toBe(30);
+        expect(getState()).toBe(state);
+        done();
     };
     subscribe(notifyme);
     fire(actions.increment(10));
     unsubscribe(notifyme);
-   
+
+});
+
+it("Checks if multiple subscribers are notified", done => {
+    const { actions, fire, getState, subscribe, unsubscribe } = setupStore(basicCounterStore);
+    //counter is 0...
+    const subs = {
+        notifyme(state) {
+
+            expect(getState()).toBe(10);
+            done();
+
+        },
+        notifyme2(state) {
+
+            expect(getState()).toBe(10);
+            done();
+
+        }
+    }
+    jest.spyOn(subs, "notifyme");
+    jest.spyOn(subs, "notifyme2");
+    subscribe(subs.notifyme);
+    subscribe(subs.notifyme2);
+    subscribe(state => {
+        expect(subs.notifyme).toHaveBeenCalled();
+        expect(subs.notifyme2).toHaveBeenCalled();
+
+    });
+
+    fire(actions.increment(10));
+
 });
 
 it("Checks if subscribe/notify is working wen state prop change...", done => {
+
     const { actions, fire, getState, subscribe } = useStore("blogAndCounterStore");
-    //state.counter is 30...
+    //state.counter is 40...
     //Hence we are only subscribing when "blog" property change, cabinets.js
     //won't notify and test pass, if we change "blog" for "counter" then we 
     //will have an error because 48 is not 58.
-   subscribe( state => {
-       expect(getState().counter).toBe(58);
-       done();
-    },["blog"]);
+    subscribe(state => {
 
-     fire(actions.increment(18));
-     done();
-   
+        expect(state).toBe(getState());
+        expect(getState().counter).toBe(58);
+        done();
+
+    }, ["blog"]);
+
+    fire(actions.increment(18));
+    done();
 });
 //Testing Exceptions
-const problemReduceStore =  {
+const problemReduceStore = {
     name: "problemReduceStore",
     initState: "Hello ",
     operations: {
         sayHello: (state, payload) => state + payloads //Error here.
     }
-        
-} ;
 
-const problemMapsStore =  {
+};
+
+const problemMapsStore = {
     name: "problemReduceStore",
     initState: "Hello ",
     operations: {
         sayHello: (state, payload) => state + payload
     },
-    maps:{
+    maps: {
         sayHello: (state, payload) => String.toUpperCase(payload) //Error here
     }
-        
-} ;
 
-const problemInterceptorStore =  {
+};
+
+const problemInterceptorStore = {
     name: "problemReduceStore",
     initState: "Hello ",
     operations: {
@@ -277,14 +322,14 @@ const problemInterceptorStore =  {
     },
     interceptors: {
         sayHello: (state, payload) => {
-                        state.salutation.hindi = "Namaste";
-                        return {state, payload};
-                }
+            state.salutation.hindi = "Namaste";
+            return { state, payload };
+        }
     }
-        
-} ;
 
-it("Checks ReducerError", ()=> { 
+};
+
+it("Checks ReducerError", ()=> {
    const t = () => {
        const {fire, actions} = setupStore(problemReduceStore);
        fire(actions.sayHello());
@@ -292,7 +337,7 @@ it("Checks ReducerError", ()=> {
    expect(t).toThrow(ReducerError);
 });
 
-it("Checks MappingError", ()=> { 
+it("Checks MappingError", ()=> {
    const t = () => {
        const {fire, actions} = setupStore(problemMapsStore);
        fire(actions.sayHello());
@@ -301,7 +346,7 @@ it("Checks MappingError", ()=> {
 });
 
 
-it("Checks InterceptorError", ()=> { 
+it("Checks InterceptorError", ()=> {
    const t = () => {
        const {fire, actions} = setupStore(problemInterceptorStore);
        fire(actions.sayHello());
@@ -315,4 +360,3 @@ it("Checks SetupError", ()=>{
     }
     expect(t).toThrow(SetupStoreError);
 });
-
