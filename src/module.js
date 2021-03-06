@@ -308,12 +308,12 @@ class Cabinets {
           }
           const combinedItems = { ...ac, ...curr };
           return combinedItems;
-        });
+        },{});
 
       function arrayToObjSet(array) {
         return array.reduce((curr, acc) => {
           return { ...acc, ...curr };
-        });
+        },{});
       }
 
       function combineReducers(reducers) {

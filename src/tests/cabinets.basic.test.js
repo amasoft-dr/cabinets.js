@@ -7,7 +7,7 @@ const counterStore = {
         increment: (state, payload) => state + payload,
         decrement: (state, payload) => state - payload
     }
-};
+}
 
 const counterStoreWithMaps = {
     ...counterStore,
@@ -15,7 +15,7 @@ const counterStoreWithMaps = {
     maps: {
         increment: (state, payload) => payload + 5
     }
-};
+}
 
 const counterStoreWithDefMap = {
     ...counterStore,
@@ -24,7 +24,7 @@ const counterStoreWithDefMap = {
         increment: (state, payload) => payload + 5,
         def: (state, payload) => payload + 2
     }
-};
+}
 
 
 const counterStoreWithInterceptors = {
@@ -38,7 +38,7 @@ const counterStoreWithInterceptors = {
         }
 
     }
-};
+}
 
 const counterStoreWithInterAndDefInter = {
     ...counterStore,
@@ -52,7 +52,7 @@ const counterStoreWithInterAndDefInter = {
 
     }
 
-};
+}
 
 const lazyCounterStore = {
     name: "lazyCounterStore",
@@ -61,7 +61,7 @@ const lazyCounterStore = {
         increment: async (state, payload) => state + payload,
         decrement: async (state, payload) => state - payload
     }
-};
+}
 
 
 it("Setups and uses Cabinets store", () => {
