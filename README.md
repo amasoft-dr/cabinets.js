@@ -1,8 +1,9 @@
 ## Cabinets.js A Simple State Management Library for JS
 Cabinets.js is a global state management library, it is not tied to any library or framework. It is simple to use but yet powerful.
 
-### To do List in Vanilla JS
-To do...
+### Codepen & CodeSandbox Examples:
+1. **[Counter Vanilla JS](https://codepen.io/andreidim/pen/QWGVyQB?editors=1011)**
+2. **[Todo List App Vanilla JS](https://codepen.io/andreidim/pen/PobdzqM)**
 
 ### It is designed to be simple
 
@@ -30,24 +31,24 @@ needing some more features that are not present in cabinets.
 
 ### Features
 
--Unidirectional State management. Data Flows in one predictable way only.
+1. Unidirectional State management. Data Flows in one predictable way only.
 
--No configuration is required, use it as it is.
+2. No configuration is required, use it as it is.
 
--Easy API
+3. Easy API
 
--Can have multiple Stores
+4. Can handle multiple Stores
 
--Can use multiple Stores independently or can use them combined.
+5. Can handle multiple Stores independently or can use them combined.
 
--Supports Mappings to transform the payload before reducer is reached.
+6. Supports Mappings to transform the payload before reducer is reached.
 
--Supports Interceptors which allow to do extra things and even modify both
+7. Supports Interceptors which allow to do extra things and even modify both
 State and Payload.
 
--Support Lazy Actions to modify the state in an async way.
+8. Support Lazy Actions to modify the state in an async way.
 
--Rich set of custom Cabinets Exceptions(Error) so you could always know
+9. Rich set of custom Cabinets Exceptions(Error) so you could always know
 why things went wrong.
 
 
@@ -77,7 +78,7 @@ const counterStore = setupStore({
      }
 });
 
-export counterStore;
+export {counterStore};
 
 ```
 
@@ -238,7 +239,7 @@ const appStore = setupStore({
      }
 });
 
-export appStore;
+export {appStore};
 
 ```
 
@@ -321,7 +322,7 @@ const counterStore = setupStore({
      }
 });
 
-export counterStore;
+export {counterStore};
 
 ```
 Code for **CommentsStore.js**
@@ -347,12 +348,12 @@ const commentStore = setupStore({
      }
 });
 
-export commentStore;
+export {commentStore};
 ```
 Code for **MyAppStore.js**
 
 ```javascript
-import { combinedStores, useStore } from "cabinets";
+import { combineStores, useStore } from "cabinets";
 import {counterStore} from "./CounterStore.js";
 import {commentsStore} from "./CommentsStroe.js";
 
