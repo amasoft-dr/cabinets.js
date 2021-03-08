@@ -415,5 +415,9 @@ it("Validatin Combining 2 stores", () => {
   const store2 = setupStore(counterStore);
   //It is important to first pass the name to the new
   //combined-store, then all stores to be combined.
-  const blogCounterStore = combineStores("AppStore", store1, store2);
+  combineStores("AppStore", store1, store2);
+  const { actions, fire, getState} = useStore("AppStore");
+  fire(actions.increment(100));
+  expect(getState().counter).toBe(110); 
+  
 });
