@@ -369,7 +369,7 @@ it("Checks SetupError", () => {
   expect(t).toThrow(SetupStoreError);
 });
 
-it("Validatin Combining 2 stores", () => {
+it("Validates Combining 2 stores works", (done) => {
   const commentsStore = {
     name: "comments",
     initState: [],
@@ -416,8 +416,12 @@ it("Validatin Combining 2 stores", () => {
   //It is important to first pass the name to the new
   //combined-store, then all stores to be combined.
   combineStores("AppStore", store1, store2);
-  const { actions, fire, getState} = useStore("AppStore");
+  const { actions, fire, getState, subscribe} = useStore("AppStore");
+  subscribe(state => {
+     done();
+  });
   fire(actions.increment(100));
-  expect(getState().counter).toBe(110); 
+  expect(getState().counter).toBe(110);
+
   
 });
