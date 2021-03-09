@@ -1,6 +1,6 @@
 {
-  "name": "cabinets",
-  "version": "1.0.6",
+  "name": "kabinets",
+  "version": "0.0.1",
   "description": "A simple but powerful global state management library.",
   "main": "lib/module.js",
   "scripts": {

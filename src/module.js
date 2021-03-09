@@ -1,4 +1,4 @@
-class Cabinets {
+class Kabinets {
   constructor() {
     const $this = this;
     const stores = {};
@@ -21,11 +21,11 @@ class Cabinets {
       return stores[name];
     };
 
-    //Cabinets Custom Errors
-    class CabinetsError extends Error {
+    //Kabinets Custom Errors
+    class KabinetsError extends Error {
       constructor(message, stateInfo) {
-        super(message + CabinetsError.info(stateInfo));
-        this.name = "CabinetsError";
+        super(message + KabinetsError.info(stateInfo));
+        this.name = "KabinetsError";
       }
       static info(stateInfo) {
         if (stateInfo)
@@ -36,35 +36,35 @@ class Cabinets {
       }
     }
 
-    class SetupStoreError extends CabinetsError {
+    class SetupStoreError extends KabinetsError {
       constructor(message, stateInfo) {
         super(message, stateInfo);
         this.name = this.name + ".SetupStoreError";
       }
     }
 
-    class ReducerError extends CabinetsError {
+    class ReducerError extends KabinetsError {
       constructor(message, stateInfo) {
         super(message, stateInfo);
         this.name = this.name + ".ReducerError";
       }
     }
     // eslint-disable-next-line
-    class AsyncActionError extends CabinetsError {
+    class AsyncActionError extends KabinetsError {
       constructor(message, stateInfo) {
         super(message, stateInfo);
         this.name = this.name + ".AsyncActionError";
       }
     }
 
-    class MappingError extends CabinetsError {
+    class MappingError extends KabinetsError {
       constructor(message, stateInfo) {
         super(message, stateInfo);
         this.name = this.name + ".MappingError";
       }
     }
     // eslint-disable-next-line
-    class InterceptorError extends CabinetsError {
+    class InterceptorError extends KabinetsError {
       constructor(message, stateInfo) {
         super(message, stateInfo);
         this.name = this.name + ".InterceptorError";
@@ -210,10 +210,10 @@ class Cabinets {
           console.error(
             `Error while executing reducer linked to action: ${action}`, e);
 
-          if (e instanceof CabinetsError)
+          if (e instanceof KabinetsError)
             throw e;
 
-          throw new CabinetsError("Error while executing reducer action.",
+          throw new KabinetsError("Error while executing reducer action.",
             { Store: store.name, Action: action, State: store.state, Error: e.message });
         }
       }
@@ -389,7 +389,7 @@ class Cabinets {
         limitedStore,
         initReducer,
         createAction,
-        CabinetsError,
+        KabinetsError,
         ReducerError,
         InterceptorError,
         MappingError,
@@ -400,13 +400,13 @@ class Cabinets {
   }
 }
 
-const cabinet = new Cabinets();
+const kabinets = new Kabinets();
 
 //Defining external API
-const globalStore =  cabinet.initGlobalStore();
+const globalStore =  kabinets.initGlobalStore();
 export const {  setupStore, 
                 combineStores, 
-                CabinetsError,
+                KabinetsError,
                 ReducerError,
                 InterceptorError,
                 MappingError,
@@ -415,5 +415,5 @@ export const {  setupStore,
 
 export function useStore(name) {
   const { limitedStore } = globalStore;
-  return limitedStore(cabinet.findStore(name));
+  return limitedStore(kabinets.findStore(name));
 }

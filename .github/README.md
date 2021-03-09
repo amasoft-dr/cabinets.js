@@ -1,5 +1,5 @@
-## Cabinets.js A Simple State Management Library for JS
-Cabinets.js is a global state management library, it is not tied to any library or framework. It is simple to use but yet powerful.
+## Kabinets.js A Simple State Management Library for JS
+kabinets.js is a global state management library, it is not tied to any library or framework. It is simple to use but yet powerful.
 
 ### Codepen & CodeSandbox Examples:
 1. **[Counter Vanilla JS](https://codepen.io/andreidim/pen/QWGVyQB?editors=1011)**
@@ -8,24 +8,24 @@ Cabinets.js is a global state management library, it is not tied to any library 
 ### It is designed to be simple
 
 In contrast with other state management libraries, it is designed to be simple to use, it is intuitive, you don't even need
-to read the whole documentation to get your app up and running with Cabinets.js
+to read the whole documentation to get your app up and running with kabinets.js
 
 ### It is not tied to any UI library
 
 It is not tied to any UI library like React or Vue, you can use it with plain-old-vanilla Javascript, and will work.
-However, we have cabinets-react.js which makes simple integration with React.js. Please check **[Cabinets-react.js](https://github.com/amasoft-dr/cabinets-react.js)** to check
+However, we have kabinets-react.js which makes simple integration with React.js. Please check **[Kabinets-react.js](https://github.com/andreidim/kabinets-react.js)** to check
 this project.
 
 ### It does not have dependencies
-Hence **cabinets.js** is very simple it does not use any dependencies. We plan to stick to this principle.
+Hence **kabinets.js** is very simple it does not use any dependencies. We plan to stick to this principle.
 It is a very small size library, so could be attractive to your project if you want to have
 low resources size.
 
 ### It is intended for small-medium size application
-Cabinets main purpose is to be used where it really needs: small-medium size applications
+Kabinets main purpose is to be used where it really needs: small-medium size applications
 we are not competing with other well-established, well stables Global State Containers,
 so, but there is no technical restriction, you can use it but probably you end up
-needing some more features that are not present in cabinets.
+needing some more features that are not present in kabinets.
 
 
 
@@ -48,26 +48,26 @@ State and Payload.
 
 8. Support Lazy Actions to modify the state in an async way.
 
-9. Rich set of custom Cabinets Exceptions(Error) so you could always know
+9. Rich set of custom kabinets Exceptions(Error) so you could always know
 why things went wrong.
 
 
 ### Not yet implemented but working on that
 
--Cabinets Flight Recorder:
+-kabinets Flight Recorder:
 > To Record all events/interactions with your stores. So you could debug easily, even
 do time travel debugging.
 
 ### Let's Code
 
-Cabinets.js is based on the idea that in your application you can have multiple stores containers
+kabinets.js is based on the idea that in your application you can have multiple stores containers
 so you could decide if you are going to use them independently from each other or even you can combine them 
 and use it one a single big store.
 
 An example of how to set up and export a simple store in **AppStores.js** file
 
 ```javascript
-import { setupStore } from "cabinets";
+import { setupStore } from "kabinets";
 
 const counterStore = setupStore({
     name: "counter",
@@ -85,7 +85,7 @@ export {counterStore};
 To use it, you only need to import it
 
 ```javascript
-import { useStore } from "cabinets";
+import { useStore } from "kabinets";
 import {counterStore} from "./AppStores.js";
 
 const { actions, fire, getState, subscribe } = useStore("counter");
@@ -116,7 +116,7 @@ reducer.
 
 
 -**subscribe**: It's a function that will register a callback  so
-  **cabinets.js** could notify when the state has changed, cabinetss.js will pass the current state to the callback.(It is very convenient to use subscribe function with for example rect *useState => setState* so, when state change component will re-render. This technique is used in cabinets-react.js). Subscribe takes another argument;
+  **kabinets.js** could notify when the state has changed, kabinetss.js will pass the current state to the callback.(It is very convenient to use subscribe function with for example rect *useState => setState* so, when state change component will re-render. This technique is used in kabinets-react.js). Subscribe takes another argument;
    an array of dependencies, very useful when  partial object state change subscription 
    is required. e.g if you have a state called app and **app** has a property called **userInfo**, 
    so you can subscribe your callback to execute it only if **userInfo** has
@@ -128,7 +128,7 @@ reducer.
 ### Using multiple Stores 
 
 So you have an Application which counts visit, but also allows you to have comments,
-you have multiple ways to handle multiple states in cabinets.
+you have multiple ways to handle multiple states in kabinets.
 
 **1-.** Having an independent Store, so you will handle how and when to use it.
 
@@ -139,7 +139,7 @@ you can combine different stores from different files.
 
 Let's see first Using multiple independent Stores in  **AppStores.js** file
 ```javascript
-import { setupStore } from "cabinets";
+import { setupStore } from "kabinets";
 
 const counterStore = setupStore({
     name: "counter",
@@ -172,7 +172,7 @@ export {counterStore, commentStore};
 To use it, you only need to import them
 
 ```javascript
-import { useStore } from "cabinets";
+import { useStore } from "kabinets";
 import {counterStore, commentStore} from "./AppStores.js";
 
 const counterStore = useStore("counter");
@@ -215,7 +215,7 @@ Let's implement a second approach, so **AppStores.js** file
 
 
 ```javascript
-import { setupStore } from "cabinets";
+import { setupStore } from "kabinets";
 
 const stringId = (str) => [...str].map(c => c.charCodeAt(0) )
                           .join("") + "_" + new Date().getTime();
@@ -247,7 +247,7 @@ export {appStore};
 To use it, you only need to import them
 
 ```javascript
-import { useStore } from "cabinets";
+import { useStore } from "kabinets";
 import {appStore} from "./AppStores.js";
 
 
@@ -305,7 +305,7 @@ Let's see the code
 Code for **counterStore.js**
 ```javascript
 
-import { setupStore } from "cabinets";
+import { setupStore } from "kabinets";
 
 const counterStore = setupStore({
     name: "counter",
@@ -327,7 +327,7 @@ export {counterStore};
 ```
 Code for **CommentsStore.js**
 ```javascript
-import { setupStore } from "cabinets";
+import { setupStore } from "kabinets";
 
 const stringId = (str) => [...str].map(c => c.charCodeAt(0) )
                           .join("") + "_" + new Date().getTime();
@@ -353,7 +353,7 @@ export {commentStore};
 Code for **MyAppStore.js**
 
 ```javascript
-import { combineStores, useStore } from "cabinets";
+import { combineStores, useStore } from "kabinets";
 import {counterStore} from "./CounterStore.js";
 import {commentsStore} from "./CommentsStroe.js";
 
@@ -371,7 +371,7 @@ Now you can use import **MyAppStore.js** file
 
 
 ```javascript
-import { useStore } from "cabinets";
+import { useStore } from "kabinets";
 import myAppStore from "./MyAppStore.js";
 
 const { actions, fire, getState, subscribe } = myAppStore("appStore");
