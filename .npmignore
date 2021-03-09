@@ -1,7 +1,8 @@
-src
+test
 webpack.config.js
 node_modules
 coverage
 babel.config.json
 .gitignore
+.github
 node_modules

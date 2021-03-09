@@ -1,4 +1,4 @@
-import { setupStore, useStore } from "../module.js";
+import { setupStore, useStore }  from "../src/module.js";
 
 const counterStore = {
     name: "counterStore",

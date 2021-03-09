@@ -1,10 +1,10 @@
-import { setupStore, combineStores, useStore } from "../module.js";
+import { setupStore, combineStores, useStore } from "../src/module.js";
 import {
   ReducerError,
   SetupStoreError,
   InterceptorError,
   MappingError
-} from "../module.js";
+} from "../src/module.js";
 
 class LocalStorage {
   constructor() {
