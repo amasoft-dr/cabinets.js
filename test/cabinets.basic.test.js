@@ -133,11 +133,17 @@ it("Checks state with both configured action interceptor and default one", () =>
     expect(getState()).toBe(3);
 });
 
-it("Check asyn state changes", async () => {
+it("Check async state changes", async () => {
     const { lazyActions, lazyFire, getState } = setupStore(lazyCounterStore);
     const state = await lazyFire(lazyActions.increment(10));
     expect(getState()).toBe(10);
     expect(getState()).toBe(state);
+
+});
+
+it("Check if undefined is returned for non existing stores",  () => {
+    const nonExistingStore = useStore("nonExistingStore");
+    expect(nonExistingStore).toBe(undefined);
 
 });
 
