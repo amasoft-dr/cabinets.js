@@ -1,0 +1,39 @@
+{
+  "name": "kabinets",
+  "version": "0.0.1",
+  "description": "A simple but powerful global state management library.",
+  "main": "lib/module.js",
+  "scripts": {
+    "test": "jest --coverage",
+    "build": "npm run test && webpack --mode production",
+    "prepublish": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andreidim/cabinets.js.git"
+  },
+  "keywords": [
+    "state",
+    "state-management",
+    "global-state",
+    "store",
+    "global-store"
+  ],
+  "author": "amasoft <amasoft.dr@gmail.com> (https://github.com/amasoft-dr)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/andreidim/cabinets.js/issues"
+  },
+  "homepage": "https://github.com/andreidim/cabinets.js#readme",
+  "devDependencies": {
+    "@babel/core": "^7.12.13",
+    "@babel/plugin-transform-runtime": "^7.12.15",
+    "@babel/preset-env": "^7.12.13",
+    "@babel/preset-react": "^7.12.13",
+    "babel-loader": "^8.2.2",
+    "jest": "^26.6.3",
+    "webpack": "^5.21.2",
+    "webpack-cli": "^4.5.0"
+  },
+  "dependencies": {}
+}
